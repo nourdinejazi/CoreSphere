@@ -2,12 +2,59 @@
 datasource db {
   provider  = "postgresql"
   url  	    = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 generator client {
   provider = "prisma-client-js"
 }
+
+
+
+model Boutique {
+  id          String    @id @db.VarChar(4)
+  name        String
+}
+
+model Cheque{
+  id            String    @id @default(cuid())
+  codeBanque String  @db.VarChar(5)
+  nche String @db.VarChar(7)
+  lib String 
+  montant Float
+  date DateTime
+  ver String?
+  codeBoutique String @db.VarChar(4)
+  paye Float?
+  type String?
+  nver String? @db.VarChar(7)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 enum UserRole {
   ADMIN
