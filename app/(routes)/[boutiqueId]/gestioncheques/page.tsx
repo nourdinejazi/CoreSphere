@@ -15,7 +15,11 @@ const GestionChequePage = async ({
   const DynamicGestionChequeClient = dynamic(
     () => import("@/components/gestion-cheque-client"),
     {
-      loading: () => <LoadingPage className="h-[40vw]" />,
+      loading: () => (
+        <div className="w-full  flex items-center justify-center h-[70vh] ">
+          <div className="fastLoader border-[4px] border-primary "></div>
+        </div>
+      ),
     }
   );
 
