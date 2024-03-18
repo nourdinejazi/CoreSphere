@@ -14,13 +14,22 @@ import {
 } from "@/components/ui/command-for-modal";
 import { Badge } from "./ui/badge";
 import { boutiques } from "@/data/jdata";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 
-export function CommandSearch() {
+interface chequeClientProps {
+  forceOpen?: boolean;
+  onForceOpenChange?: () => void;
+}
+
+export function CommandSearch({
+  forceOpen,
+  onForceOpenChange,
+}: chequeClientProps) {
   const [open, setOpen] = React.useState(false);
-  const params = useParams();
+
   const { setTheme } = useTheme();
+
   const router = useRouter();
 
   React.useEffect(() => {
@@ -37,7 +46,10 @@ export function CommandSearch() {
 
   return (
     <>
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog
+        open={forceOpen ? forceOpen : open}
+        onOpenChange={onForceOpenChange ? onForceOpenChange : setOpen}
+      >
         <CommandInput placeholder="Type a command or search..." />
         <CommandList>
           <CommandEmpty>No results found.</CommandEmpty>
@@ -48,6 +60,7 @@ export function CommandSearch() {
                 onSelect={(value) => {
                   setTheme(value);
                   router.push(`/${value}/gestioncheques`);
+                  router.refresh();
                   setOpen(false);
                 }}
                 disabled={false}

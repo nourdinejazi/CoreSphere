@@ -1,5 +1,7 @@
 import { db } from "@/lib/db";
 import ChequeForm from "./_components/cheque-form";
+import { Suspense } from "react";
+import LoadingPage from "@/app/loading";
 
 const ChequeFormPage = async ({ params }: { params: { chequeId: string } }) => {
   const cheque = await db.cheque.findUnique({
@@ -10,7 +12,9 @@ const ChequeFormPage = async ({ params }: { params: { chequeId: string } }) => {
 
   return (
     <div>
-      <ChequeForm initialData={cheque} />
+      <Suspense fallback={<LoadingPage />}>
+        <ChequeForm initialData={cheque} />
+      </Suspense>
     </div>
   );
 };

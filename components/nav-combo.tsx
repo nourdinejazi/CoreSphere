@@ -20,18 +20,22 @@ import {
 import { boutiques } from "@/data/jdata";
 import { useParams, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
+import { set } from "date-fns";
 
 export function NavCombo() {
   const [open, setOpen] = React.useState(false);
-  const [id, setid] = React.useState("");
   const params = useParams();
+  const [id, setid] = React.useState(
+    (params.boutiqueId as string) ? (params.boutiqueId as string) : ""
+  );
+
   const router = useRouter();
   const { setTheme } = useTheme();
+
   React.useEffect(() => {
     if (id) router.push(`/${id}/gestioncheques`);
+    setTheme(id);
   }, [id]);
-
-  console.log(params);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -42,15 +46,14 @@ export function NavCombo() {
           aria-expanded={open}
           className="w-[250px] justify-between"
         >
-          {id ? (
-            <div className="flex items-center justify-center gap-2">
-              <Store /> {params.boutiqueId}
-            </div>
-          ) : (
-            <div className="flex items-center justify-center gap-2">
-              <Store /> {params.boutiqueId}
-            </div>
-          )}
+          <div className="flex items-center justify-center gap-2">
+            <Store />{" "}
+            {
+              boutiques.find((boutique) => boutique.id == params.boutiqueId)
+                ?.name
+            }
+          </div>
+
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -67,14 +70,15 @@ export function NavCombo() {
                 onSelect={(currentid) => {
                   setid(currentid);
                   setTheme(currentid);
-                  console.log(currentid);
                   setOpen(false);
                 }}
               >
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    id === boutique.id ? "opacity-100" : "opacity-0"
+                    params.boutiqueId === boutique.id
+                      ? "opacity-100"
+                      : "opacity-0"
                   )}
                 />
                 {boutique.name}

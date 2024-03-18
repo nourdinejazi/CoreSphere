@@ -51,6 +51,7 @@ import {
 } from "@/components/ui/command";
 import { AddCheque } from "@/actions/cheque-actions/add-cheque";
 import { UpdateCheque } from "@/actions/cheque-actions/update-cheque";
+import { toast } from "sonner";
 
 const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
   const [isPending, startTransition] = useTransition();
@@ -69,32 +70,61 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof ChequeSchema>) => {
+  const onSubmit = async (values: z.infer<typeof ChequeSchema>) => {
     startTransition(() => {
       if (initialData) {
-        UpdateCheque(
-          values,
-          params.segmentId as string,
-          params.chequeId as string
-        ).then((data) => {
-          // if (data?.error) {
-          //   toast.error(data.error);
-          // }
-          // if (data?.success) {
-          //   toast.success(data.success);
-          // }
-        });
+        toast.promise(
+          () =>
+            UpdateCheque(
+              values,
+              params.boutiqueId as string,
+              params.chequeId as string
+            ),
+          {
+            loading: "Updating...",
+            error: "Update failed!",
+            duration: 1000,
+            finally: () => {
+              toast("L'événement a été modifié", {
+                description: format(
+                  new Date(),
+                  "eeee, MMMM dd, yyyy 'at' HH:mm:ss",
+                  {
+                    locale: fr,
+                  }
+                ),
+                action: {
+                  label: "fermer",
+                  onClick: () => {},
+                },
+              });
+            },
+          }
+        );
       } else {
-        AddCheque(values, params.boutiqueId as string).then((data) => {
-          // if (data?.error) {
-          //   toast.error(data.error);
-          // }
-          // if (data?.success) {
-          //   toast.success(data.success);
-          // }
+        toast.promise(() => AddCheque(values, params.boutiqueId as string), {
+          loading: "Ajout en cours...",
+          error: "create failed!",
+          duration: 1000,
+          finally: () => {
+            toast("L'événement a été ajouté", {
+              description: format(
+                new Date(),
+                "eeee, MMMM dd, yyyy 'at' HH:mm:ss",
+                {
+                  locale: fr,
+                }
+              ),
+              action: {
+                label: "fermer",
+                onClick: () => {},
+              },
+            });
+          },
         });
       }
     });
+    router.push(`/${params.boutiqueId}/gestioncheques`);
   };
 
   return (
@@ -104,12 +134,15 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className=" p-8 bg-white mt-8 rounded-xl shadow-md"
         >
-          <div className="  flex items-start justify-center gap-5 p-4 flex-wrap   ">
+          <div
+            //  className="  flex items-start justify-center gap-5 p-4 flex-wrap   "
+            className="grid grid-cols-2 gap-10  "
+          >
             <FormField
               control={form.control}
               name="codeBanque"
               render={({ field }) => (
-                <FormItem className="flex flex-col w-[300px]">
+                <FormItem className="flex flex-col max-w-[400px] ">
                   <FormLabel className="text-base">Code Banque</FormLabel>
                   <Popover open={open} onOpenChange={setOpen}>
                     <PopoverTrigger asChild>
@@ -131,7 +164,7 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-[300px] max-h-[300px] overflow-auto  p-0">
+                    <PopoverContent className="w-[400px] max-h-[300px] overflow-auto  p-0">
                       <Command>
                         <CommandInput placeholder="Search language..." />
                         <CommandEmpty>No language found.</CommandEmpty>
@@ -178,7 +211,7 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
                   <FormControl>
                     <Input
                       {...field}
-                      className="w-[400px]"
+                      className="max-w-[400px]"
                       disabled={isPending}
                       placeholder=""
                       type="text"
@@ -198,7 +231,7 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
                   <FormControl>
                     <Input
                       {...field}
-                      className="w-[400px]"
+                      className="max-w-[400px]"
                       disabled={isPending}
                       placeholder=""
                       type="text"
@@ -219,6 +252,7 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
                   <FormControl>
                     <Input
                       {...field}
+                      className="max-w-[400px]"
                       disabled={isPending}
                       placeholder=""
                       type="number"
@@ -235,7 +269,7 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
               control={form.control}
               name="date"
               render={({ field }) => (
-                <FormItem className="flex flex-col pt-2.5 ">
+                <FormItem className="flex flex-col pt-2.5 max-w-[400px]">
                   <FormLabel>Date.VAl</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -272,7 +306,7 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
             />
           </div>
 
-          <div className="w-full flex justify-center gap-5 sm:justfiy-center  mt-4 flex-wrap   ">
+          <div className="w-full flex justify-center gap-5 sm:justfiy-center  mt-10 flex-wrap   ">
             <Button
               className="w-[150px] bg-[#E9ECEF] text-[#6C757D] hover:bg-[#E9ECEF] "
               type="reset"

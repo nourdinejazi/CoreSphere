@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
 } from "@radix-ui/react-dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Store } from "lucide-react";
 
 import { ChevronsUpDown } from "lucide-react";
 import Link from "next/link";
@@ -51,7 +51,7 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
     cell: ({ row }) => {
       return (
         <span>
-          <Badge variant={"secondary"}>{row.original.codeBanque}</Badge>
+          <Badge variant={"default"}>{row.original.codeBanque}</Badge>
         </span>
       );
     },
@@ -175,7 +175,7 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
     cell: ({ row }) => {
       return (
         <div>
-          <Badge variant={"secondary"}>
+          <Badge className="" variant={"secondary"}>
             {row.original.codeBoutique.toUpperCase()}
           </Badge>
         </div>

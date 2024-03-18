@@ -3,11 +3,7 @@ import { Inter } from "next/font/google";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
-import { CommandSearch } from "@/components/command-search";
-import Nav from "@/components/nav";
 import { cn } from "@/lib/utils";
-import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,36 +22,7 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="en">
-        <body className={cn("bg-[#f2f6fe] ", inter.className)}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            themes={[
-              "light",
-              "dark",
-              "system",
-              "chic",
-              "jarr",
-              "anwa",
-              "site",
-              "lact",
-              "char",
-              "sfbh",
-              "korb",
-              "gene",
-            ]}
-            disableTransitionOnChange
-          >
-            <Toaster />
-            <CommandSearch />
-            <div className="w-full h-2 bg-primary" />
-            <div className="">
-              <Nav />
-              <div className="px-8 mx-2">{children}</div>
-            </div>
-          </ThemeProvider>
-        </body>
+        <body className={cn("bg-[#f2f6fe] ", inter.className)}>{children}</body>
       </html>
     </SessionProvider>
   );

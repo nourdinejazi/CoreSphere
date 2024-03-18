@@ -1,16 +1,50 @@
-import { Navbar } from "./_components/navbar";
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import { SessionProvider } from "next-auth/react";
+import { auth } from "@/auth";
 
-interface ProtectedLayoutProps {
+import { Toaster } from "@/components/ui/sonner";
+import { CommandSearch } from "@/components/command-search";
+import Nav from "@/components/nav";
+import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/components/theme-provider";
+import Ld from "@/components/loader";
+
+export default async function RootLayout({
+  children,
+}: {
   children: React.ReactNode;
-};
-
-const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
-  return ( 
-    <div className="h-full w-full flex flex-col gap-y-10 items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-sky-400 to-blue-800">
-      <Navbar />
-      {children}
-    </div>
-   );
+}) {
+  return (
+    <>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        themes={[
+          "light",
+          "dark",
+          "system",
+          "chic",
+          "jarr",
+          "anwa",
+          "site",
+          "lact",
+          "char",
+          "sfbh",
+          "korb",
+          "gene",
+        ]}
+        disableTransitionOnChange
+      >
+        <Toaster icons={{ loading: <Ld /> }} />
+        <CommandSearch />
+        <div className="w-full h-2 bg-primary" />
+        <div className="">
+          <Nav />
+          <div className="px-8 mx-2">{children}</div>
+        </div>
+      </ThemeProvider>
+    </>
+  );
 }
- 
-export default ProtectedLayout;

@@ -33,9 +33,9 @@ export const UpdateCheque = async (
         date: values.date,
         nche: values.nche,
         codeBanque: values.codeBanque,
-        codeBoutique: codeBoutique,
       },
     });
+    console.log("aaa", codeBoutique);
 
     revalidatePath(`/${codeBoutique}/gestioncheques`);
 
@@ -44,6 +44,7 @@ export const UpdateCheque = async (
     console.log(error);
     return { error: "Something Went wrong!" };
   } finally {
-    redirect(`/${codeBoutique}/gestioncheques`);
+    console.log("aaa", codeBoutique);
+    // redirect(`/${codeBoutique}/gestioncheques`);
   }
 };
