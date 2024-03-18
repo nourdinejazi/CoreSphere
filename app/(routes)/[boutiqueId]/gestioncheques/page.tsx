@@ -4,9 +4,9 @@ import { PathSlash } from "@/components/path-slash";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import Link from "next/link";
-import { Suspense } from "react";
-import dynamic from "next/dynamic";
 
+import dynamic from "next/dynamic";
+import Image from "next/image";
 const GestionChequePage = async ({
   params,
 }: {
@@ -15,7 +15,7 @@ const GestionChequePage = async ({
   const DynamicGestionChequeClient = dynamic(
     () => import("@/components/gestion-cheque-client"),
     {
-      loading: () => <LoadingPage />,
+      loading: () => <LoadingPage className="h-[40vw]" />,
     }
   );
 

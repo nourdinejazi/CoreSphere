@@ -21,9 +21,7 @@ export function PathSlash() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink href={`/${params.boutiqueId}/gestioncheques`}>
-            Home
-          </BreadcrumbLink>
+          <BreadcrumbLink href={`/`}>Home</BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator>
           <Slash />

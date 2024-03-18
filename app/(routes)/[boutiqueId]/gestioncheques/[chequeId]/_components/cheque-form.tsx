@@ -85,7 +85,7 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
             error: "Update failed!",
             duration: 1000,
             finally: () => {
-              toast("L'événement a été modifié", {
+              toast.success("L'événement a été modifié", {
                 description: format(
                   new Date(),
                   "eeee, MMMM dd, yyyy 'at' HH:mm:ss",
@@ -107,7 +107,8 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
           error: "create failed!",
           duration: 1000,
           finally: () => {
-            toast("L'événement a été ajouté", {
+            toast.success("L'événement a été ajouté", {
+              className: "",
               description: format(
                 new Date(),
                 "eeee, MMMM dd, yyyy 'at' HH:mm:ss",
