@@ -1,14 +1,8 @@
 import MainSpinner from "@/components/main-spinner";
-import { cn } from "@/lib/utils";
 
-const LoadingPage = ({ className }: { className?: string }) => {
+const LoadingPage = () => {
   return (
-    <div
-      className={cn(
-        "w-full h-[90vh]  flex items-center justify-center",
-        className
-      )}
-    >
+    <div className="w-full h-[100vh]  flex items-center justify-center">
       <MainSpinner />
     </div>
   );
