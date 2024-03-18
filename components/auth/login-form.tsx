@@ -21,6 +21,8 @@ import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { login } from "@/actions/login";
+import SmallSpinner from "../small-spinner";
+import Ld from "../loader";
 
 export const LoginForm = () => {
   const searchParams = useSearchParams();
@@ -103,7 +105,13 @@ export const LoginForm = () => {
           <FormError message={error} />
           <FormSuccess message={success} />
           <Button disabled={isPending} type="submit" className="w-full">
-            Login
+            {isPending ? (
+              <span className="flex items-center justify-center gap-2">
+                Connection en cours <Ld />
+              </span>
+            ) : (
+              <span>Connection</span>
+            )}
           </Button>
         </form>
       </Form>

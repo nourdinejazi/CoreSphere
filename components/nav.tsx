@@ -3,7 +3,6 @@ import MainNav from "./main-nav";
 import SecondaryMainNav from "./secondary-main-nav";
 import { UserButton } from "./auth/user-button";
 import { Separator } from "./ui/separator";
-import { ThemeSwitcher } from "./theme-switcher";
 
 const Nav = () => {
   return (

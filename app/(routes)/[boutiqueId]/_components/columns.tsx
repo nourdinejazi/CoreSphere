@@ -14,7 +14,7 @@ import { MoreHorizontal, Store } from "lucide-react";
 import { ChevronsUpDown } from "lucide-react";
 import Link from "next/link";
 import { Cheque } from "@prisma/client";
-import { useParamsHook } from "@/hooks/use-parmas";
+import { ParamsHook } from "@/hooks/use-parmas";
 import { DeleteCheque } from "@/actions/cheque-actions/delete-cheque";
 import { Badge } from "@/components/ui/badge";
 
@@ -262,7 +262,7 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const params = useParamsHook();
+      const params = ParamsHook();
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
