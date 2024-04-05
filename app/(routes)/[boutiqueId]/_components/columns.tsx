@@ -18,7 +18,7 @@ import { ParamsHook } from "@/hooks/use-parmas";
 import { DeleteCheque } from "@/actions/cheque-actions/delete-cheque";
 import { Badge } from "@/components/ui/badge";
 import Alerte from "@/components/alerte";
-import { useAlert } from "@/hooks/use-alerte";
+import { AlertUse } from "@/hooks/use-alerte";
 
 export const ChequeColumns: ColumnDef<Cheque>[] = [
   {
@@ -303,7 +303,7 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
     id: "actions",
     cell: ({ row }) => {
       const params = ParamsHook();
-      const alr = useAlert();
+      const alr = AlertUse();
       return (
         <>
           <DropdownMenu>

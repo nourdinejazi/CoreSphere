@@ -1,7 +1,6 @@
 import { DataTable } from "@/app/(routes)/[boutiqueId]/_components/data-table";
 import { ChequeColumns } from "@/app/(routes)/[boutiqueId]/_components/columns";
-import { Cheque } from "@prisma/client";
-import { Suspense } from "react";
+
 import Alerte from "./alerte";
 import { db } from "@/lib/db";
 

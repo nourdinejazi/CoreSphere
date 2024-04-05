@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface useAlertProps {
+interface AlertUseProps {
   open: boolean;
   codeBoutique: string;
   id: string;
@@ -11,7 +11,7 @@ interface useAlertProps {
   setModule: (module: "Reglement" | "Cheque" | null) => void;
 }
 
-export const useAlert = create<useAlertProps>((set) => ({
+export const AlertUse = create<AlertUseProps>((set) => ({
   open: false,
   codeBoutique: "",
   module: null,

@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ParamsHook } from "@/hooks/use-parmas";
 import { DeleteReglement } from "@/actions/cheque-actions/reglement-actions/delete-reglement";
-import { useAlert } from "@/hooks/use-alerte";
+import { AlertUse } from "@/hooks/use-alerte";
 import Alerte from "@/components/alerte";
 import { space } from "postcss/lib/list";
 import { Span } from "next/dist/trace";
@@ -353,7 +353,7 @@ export const ReglementColumns: ColumnDef<Reglement & { cheque: Cheque }>[] = [
     id: "actions",
     cell: ({ row }) => {
       const params = ParamsHook();
-      const alr = useAlert();
+      const alr = AlertUse();
 
       return (
         <>

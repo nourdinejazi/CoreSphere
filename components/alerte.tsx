@@ -12,12 +12,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useAlert } from "@/hooks/use-alerte";
+import { AlertUse } from "@/hooks/use-alerte";
 import { startTransition } from "react";
 import { toast } from "sonner";
 
 const Alerte = () => {
-  const alr = useAlert();
+  const alr = AlertUse();
 
   const handleWho = () => {
     if (alr.module === "Cheque") {
