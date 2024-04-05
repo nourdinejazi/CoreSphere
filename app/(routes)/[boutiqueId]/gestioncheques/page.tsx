@@ -14,7 +14,7 @@ const GestionChequePage = async ({
 }) => {
   return (
     <div>
-      <div className="p-5 print-  no-print flex items-center justify-between ">
+      <div className="p-5   no-print flex items-center justify-between ">
         <PathSlash />
 
         <Link href={`/${params.boutiqueId}/gestioncheques/new`}>

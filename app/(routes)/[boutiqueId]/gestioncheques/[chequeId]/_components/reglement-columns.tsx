@@ -23,11 +23,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ParamsHook } from "@/hooks/use-parmas";
-import { DeleteReglement } from "@/actions/cheque-actions/reglement-actions/delete-reglement";
 import { AlertUse } from "@/hooks/use-alerte";
-import Alerte from "@/components/alerte";
-import { space } from "postcss/lib/list";
-import { Span } from "next/dist/trace";
 
 export const ReglementColumns: ColumnDef<Reglement & { cheque: Cheque }>[] = [
   {
@@ -37,7 +33,7 @@ export const ReglementColumns: ColumnDef<Reglement & { cheque: Cheque }>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value: any) => row.toggleSelected(!!value)}
         aria-label="Select row"
-        className="border bg-white  rounded-lg"
+        className="border bg-white  rounded-lg print:hidden"
       />
     ),
     enableSorting: false,

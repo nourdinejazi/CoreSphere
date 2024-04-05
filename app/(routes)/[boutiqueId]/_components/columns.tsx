@@ -301,6 +301,7 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
 
   {
     id: "actions",
+
     cell: ({ row }) => {
       const params = ParamsHook();
       const alr = AlertUse();
@@ -308,7 +309,7 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
         <>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0 ">
+              <Button variant="ghost" className="h-8 w-8 p-0  ">
                 <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-5 w-5" />
               </Button>

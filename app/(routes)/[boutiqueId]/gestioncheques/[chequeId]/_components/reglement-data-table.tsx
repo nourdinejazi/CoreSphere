@@ -38,6 +38,7 @@ import { DatePickerWithRange } from "@/components/date-range-picker";
 import { DateRange } from "react-day-picker";
 import Alerte from "@/components/alerte";
 import { HandCoins, Menu } from "lucide-react";
+import { DataTablePagination } from "@/components/data-table-pagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -107,7 +108,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="">
-      <div className="rounded-xl  bg-white  p-4 shadow-md">
+      <div className="rounded-t-xl  bg-white  p-4 shadow-md">
         <div className="print:hidden text-[#969696] flex flex-col items-center justify-center  gap-2   ">
           <div className="flex gap-2 px-3  no-scroll-bar    items-center justify-start  w-full overflow-x-auto  ">
             <div className="flex items-center ">
@@ -183,7 +184,7 @@ export function DataTable<TData, TValue>({
             <DatePickerWithRange onDateChange={onDateChange} />
           </div>
         </div>
-        <div className="bg-[#E9EEF0] space-y-4 rounded-t-xl p-4 ">
+        <div className="bg-[#E9EEF0] print:bg-white space-y-4 rounded-t-xl p-4 ">
           <h1 className="text-xl font-medium">Liste des Réglement</h1>
           <div className="text-sm flex items-center justify-start gap-2">
             <span className="font-semibold"> Total montant :</span>
@@ -273,30 +274,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="print:hidden"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          className="print:hidden"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </Button>
-      </div>
+      <DataTablePagination table={table} />
     </div>
   );
 }

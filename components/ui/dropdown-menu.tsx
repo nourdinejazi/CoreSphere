@@ -66,6 +66,7 @@ const DropdownMenuContent = React.forwardRef<
 >(({ className, sideOffset = 4, ...props }, ref) => (
   <DropdownMenuPrimitive.Portal>
     <DropdownMenuPrimitive.Content
+      onCloseAutoFocus={(e) => e.preventDefault()}
       ref={ref}
       sideOffset={sideOffset}
       className={cn(

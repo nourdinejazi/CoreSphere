@@ -12,7 +12,7 @@ const GestionChequeClient = async () => {
   });
 
   return (
-    <div>
+    <div className="k">
       <Alerte />
       <DataTable data={data} columns={ChequeColumns} />
     </div>
