@@ -31,11 +31,10 @@ export const UpdateCheque = async (
         lib: values.lib,
         montant: values.montant,
         date: values.date,
-        nche: values.nche,
+        dateBoutique: values.dateBoutique,
         codeBanque: values.codeBanque,
       },
     });
-    console.log("aaa", codeBoutique);
 
     revalidatePath(`/${codeBoutique}/gestioncheques`);
 
@@ -43,8 +42,5 @@ export const UpdateCheque = async (
   } catch (error) {
     console.log(error);
     return { error: "Something Went wrong!" };
-  } finally {
-    console.log("aaa", codeBoutique);
-    // redirect(`/${codeBoutique}/gestioncheques`);
   }
 };

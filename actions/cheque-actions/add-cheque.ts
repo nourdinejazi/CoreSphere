@@ -7,9 +7,8 @@ import { db } from "@/lib/db";
 import { ChequeSchema } from "@/schemas/cheque-schemas";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
-export const AddCheque = async (
+export const AddCheque= async (
   values: z.infer<typeof ChequeSchema>,
   codeBoutique: string
 ) => {
@@ -27,19 +26,19 @@ export const AddCheque = async (
         lib: values.lib,
         montant: values.montant,
         date: values.date,
+        dateBoutique: values.dateBoutique,
         nche: values.nche,
         codeBanque: values.codeBanque,
         codeBoutique: codeBoutique,
+        restapaye: values.montant,
       },
     });
 
-    revalidatePath(`/${codeBoutique}/gestioncheques`);
+    revalidatePath(`/${codeBoutique}/gestioncheques/new`);
 
     return { success: "Chèque ajouté avec succès !" };
   } catch (error) {
     console.log(error);
     return { error: "Something Went wrong!" };
-  } finally {
-    redirect(`/${codeBoutique}/gestioncheques`);
   }
 };

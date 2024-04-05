@@ -18,7 +18,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { boutiques } from "@/data/jdata";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
 import { set } from "date-fns";
 
@@ -31,9 +31,15 @@ export function NavCombo() {
 
   const router = useRouter();
   const { setTheme } = useTheme();
+  const path = usePathname();
 
   React.useEffect(() => {
-    if (id) router.push(`/${id}/gestioncheques`);
+    if (id) {
+      const route = path.split("/");
+      route[1] = id;
+      const newRoute = route.join("/");
+      router.push(newRoute);
+    }
     setTheme(id);
   }, [id]);
 

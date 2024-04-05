@@ -60,7 +60,6 @@ export function CommandSearch({
                 onSelect={(value) => {
                   setTheme(value);
                   router.push(`/${value}/gestioncheques`);
-                  router.refresh();
                   setOpen(false);
                 }}
                 disabled={false}

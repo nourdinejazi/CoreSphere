@@ -43,7 +43,7 @@ async function seedDatabase() {
         ? convertDateFormat(cheque.createdAt)
         : new Date();
       cheque.montant = parseFloat(cheque.montant);
-      cheque.paye = parseFloat(cheque.paye);
+      cheque.payement = parseFloat(cheque.payement);
       cheque.nche = cheque.nche ? cheque.nche.toString() : "";
       return cheque;
     });
@@ -62,7 +62,7 @@ async function seedDatabase() {
     //   date: "15/10/2001",
     //   ver: "",
     //   codeBoutique: "CHAR",
-    //   paye: "0,000",
+    //   payement: "0,000",
     //   type: "GAR",
     //   nver: "",
     // };

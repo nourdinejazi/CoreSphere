@@ -1,19 +1,31 @@
 import { db } from "@/lib/db";
-import ChequeForm from "./_components/cheque-form";
-import { Suspense } from "react";
 
-const ChequeFormPage = async ({ params }: { params: { chequeId: string } }) => {
+import { Suspense } from "react";
+import ReglementForm from "../_components/reglement-form";
+
+const ReglementFormPage = async ({
+  params,
+}: {
+  params: { chequeId: string };
+}) => {
   const cheque = await db.cheque.findUnique({
     where: {
       id: params.chequeId,
     },
   });
 
-  const lastCheque = await db.cheque.findMany({
+  const lastReglement = await db.reglement.findMany({
     orderBy: {
       id: "desc",
     },
-    take: 10,
+    include: {
+      cheque: true,
+    },
+    where: {
+      cheque: {
+        id: params.chequeId,
+      },
+    },
   });
 
   return (
@@ -25,14 +37,13 @@ const ChequeFormPage = async ({ params }: { params: { chequeId: string } }) => {
           </div>
         }
       >
-        <ChequeForm
-          recentCheques={lastCheque}
-          lastCheque={lastCheque[0]}
-          initialData={cheque}
+        <ReglementForm
+          recentReglements={lastReglement}
+          chequeReglement={cheque}
         />
       </Suspense>
     </div>
   );
 };
 
-export default ChequeFormPage;
+export default ReglementFormPage;

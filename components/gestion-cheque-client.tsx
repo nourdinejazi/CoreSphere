@@ -1,16 +1,20 @@
-"use client";
-
 import { DataTable } from "@/app/(routes)/[boutiqueId]/_components/data-table";
 import { ChequeColumns } from "@/app/(routes)/[boutiqueId]/_components/columns";
 import { Cheque } from "@prisma/client";
+import { Suspense } from "react";
+import Alerte from "./alerte";
+import { db } from "@/lib/db";
 
-interface chequeClientProps {
-  data: Cheque[] | [];
-}
+const GestionChequeClient = async () => {
+  const data = await db.cheque.findMany({
+    where: {
+      statusPayement: false,
+    },
+  });
 
-const GestionChequeClient = ({ data }: chequeClientProps) => {
   return (
     <div>
+      <Alerte />
       <DataTable data={data} columns={ChequeColumns} />
     </div>
   );

@@ -15,6 +15,14 @@ const SecondaryMainNav = () => {
       label: "Liste des chèques",
       active: pathname.includes(`/gestioncheques`),
     },
+    {
+      href:
+        pathname.split("/").length > 0
+          ? `/${pathname.split("/")[1]}/gestioncheques/reglement`
+          : "/",
+      label: "Liste des règlements",
+      active: pathname.includes(`/gestioncheques/reglement`),
+    },
   ];
 
   return (

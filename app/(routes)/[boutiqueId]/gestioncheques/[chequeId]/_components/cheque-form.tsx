@@ -32,16 +32,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import fr from "date-fns/locale/fr";
 import { cn } from "@/lib/utils";
-
 import SmallSpinner from "@/components/small-spinner";
 import { ChequeSchema } from "@/schemas/cheque-schemas";
-
-interface SegmentsFormProps {
-  initialData: Cheque | null;
-}
-
 import { banks } from "@/data/jdata";
-
 import {
   Command,
   CommandEmpty,
@@ -52,8 +45,28 @@ import {
 import { AddCheque } from "@/actions/cheque-actions/add-cheque";
 import { UpdateCheque } from "@/actions/cheque-actions/update-cheque";
 import { toast } from "sonner";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
-const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
+interface ChequeFormProps {
+  initialData: Cheque | null;
+  lastCheque: Cheque | null;
+  recentCheques: Cheque[];
+}
+
+const ChequeForm = ({
+  initialData,
+  lastCheque,
+  recentCheques,
+}: ChequeFormProps) => {
   const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -61,14 +74,16 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
 
   const form = useForm<z.infer<typeof ChequeSchema>>({
     resolver: zodResolver(ChequeSchema),
-    defaultValues: initialData || {
-      codeBanque: "",
-      nche: "",
-      lib: "",
-      montant: 0,
-      date: undefined,
-    },
+    defaultValues: initialData ||
+      lastCheque || {
+        codeBanque: "",
+        nche: "",
+        lib: "",
+        montant: 0,
+        date: undefined,
+      },
   });
+
 
   const onSubmit = async (values: z.infer<typeof ChequeSchema>) => {
     startTransition(() => {
@@ -79,53 +94,40 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
               values,
               params.boutiqueId as string,
               params.chequeId as string
-            ),
+            ).then((data) => {
+              if (data?.error) {
+                return Promise.reject(data.error);
+              } else {
+                return Promise.resolve(data.success);
+              }
+            }),
           {
-            loading: "Updating...",
-            error: "Update failed!",
-            duration: 1000,
-            finally: () => {
-              toast.success("L'événement a été modifié", {
-                description: format(
-                  new Date(),
-                  "eeee, MMMM dd, yyyy 'at' HH:mm:ss",
-                  {
-                    locale: fr,
-                  }
-                ),
-                action: {
-                  label: "fermer",
-                  onClick: () => {},
-                },
-              });
-            },
+            loading: "Mise à jour en cours...",
+            error: (err) => err,
+            success: (data) => data,
           }
         );
       } else {
-        toast.promise(() => AddCheque(values, params.boutiqueId as string), {
-          loading: "Ajout en cours...",
-          error: "create failed!",
-          duration: 1000,
-          finally: () => {
-            toast.success("L'événement a été ajouté", {
-              className: "",
-              description: format(
-                new Date(),
-                "eeee, MMMM dd, yyyy 'at' HH:mm:ss",
-                {
-                  locale: fr,
-                }
-              ),
-              action: {
-                label: "fermer",
-                onClick: () => {},
-              },
-            });
-          },
-        });
+        toast.promise(
+          () =>
+            AddCheque(values, params.boutiqueId as string).then((data) => {
+              if (data?.error) {
+                return Promise.reject(data.error);
+              } else {
+                return Promise.resolve(data.success);
+              }
+            }),
+          {
+            loading: "Ajout en cours...",
+            error: (err) => err,
+            success: (data) => data,
+          }
+        );
       }
     });
-    router.push(`/${params.boutiqueId}/gestioncheques`);
+    if (initialData) {
+      router.push(`/${params.boutiqueId}/gestioncheques`);
+    }
   };
 
   return (
@@ -212,8 +214,16 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
                   <FormControl>
                     <Input
                       {...field}
-                      className="max-w-[400px]"
-                      disabled={isPending}
+                      onBlur={(e) => {
+                        if (e.target.value.length < 7) {
+                          form.setValue(
+                            "nche",
+                            e.target.value.padStart(7, "0")
+                          );
+                        }
+                      }}
+                      className={"max-w-[400px]"}
+                      disabled={isPending || initialData !== null}
                       placeholder=""
                       type="text"
                     />
@@ -225,53 +235,10 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
             />
             <FormField
               control={form.control}
-              name="lib"
-              render={({ field }) => (
-                <FormItem className="flex flex-col items-start justify-center  ">
-                  <FormLabel className="text-base">libellé</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      className="max-w-[400px]"
-                      disabled={isPending}
-                      placeholder=""
-                      type="text"
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="montant"
-              render={({ field }) => (
-                <FormItem className="flex flex-col items-start justify-center  ">
-                  <FormLabel className="text-base">Montant</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      className="max-w-[400px]"
-                      disabled={isPending}
-                      placeholder=""
-                      type="number"
-                      min="0"
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="date"
+              name="dateBoutique"
               render={({ field }) => (
                 <FormItem className="flex flex-col pt-2.5 max-w-[400px]">
-                  <FormLabel>Date.VAl</FormLabel>
+                  <FormLabel>Date Boutique</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -305,6 +272,89 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="lib"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-start justify-center  ">
+                  <FormLabel className="text-base">libellé</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="max-w-[400px]"
+                      disabled={isPending}
+                      placeholder=""
+                      type="text"
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="flex flex-col pt-2.5 max-w-[400px]">
+                  <FormLabel>Date échéance</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            " pl-3  text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP", { locale: fr })
+                          ) : (
+                            <span className="mx-2">Choisir une date</span>
+                          )}
+                          <div className="w-2"></div>
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50 " />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value!}
+                        onSelect={field.onChange}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="montant"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-start justify-center  ">
+                  <FormLabel className="text-base">Montant</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="max-w-[400px]"
+                      disabled={isPending}
+                      placeholder=""
+                      type="number"
+                      step="0.001"
+                      min="0"
+                    />
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           <div className="w-full flex justify-center gap-5 sm:justfiy-center  mt-10 flex-wrap   ">
@@ -328,8 +378,37 @@ const SegmentsForm = ({ initialData }: SegmentsFormProps) => {
           </div>
         </form>
       </Form>
+      <div className="p-8 bg-white mt-8 rounded-xl shadow-md">
+        <Table>
+          <TableCaption>Liste des 10 chéques récents</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[100px]">C.Banque</TableHead>
+              <TableHead>Num Cheque</TableHead>
+              <TableHead>Libélé</TableHead>
+              <TableHead>Date échéance</TableHead>
+              <TableHead className="text-right">Montant</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {recentCheques.map((cheque) => (
+              <TableRow key={cheque.id}>
+                <TableCell>
+                  <Badge variant={"default"}>{cheque.codeBanque}</Badge>
+                </TableCell>
+                <TableCell>{cheque.nche}</TableCell>
+                <TableCell>{cheque.lib}</TableCell>
+                <TableCell>
+                  {format(cheque.date, "PPP", { locale: fr })}
+                </TableCell>
+                <TableCell className="text-right">{cheque.montant}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
 
-export default SegmentsForm;
+export default ChequeForm;

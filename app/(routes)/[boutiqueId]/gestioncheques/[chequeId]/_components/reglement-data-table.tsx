@@ -11,14 +11,9 @@ import {
   getSortedRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
+  GroupingState,
 } from "@tanstack/react-table";
 
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import * as React from "react";
 import {
   Table,
@@ -28,6 +23,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
@@ -35,6 +36,7 @@ import { Input } from "@/components/ui/input";
 import FilterInput from "@/components/filter_input";
 import { DatePickerWithRange } from "@/components/date-range-picker";
 import { DateRange } from "react-day-picker";
+import Alerte from "@/components/alerte";
 import { HandCoins, Menu } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
@@ -63,7 +65,6 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
@@ -102,13 +103,12 @@ export function DataTable<TData, TValue>({
 
   React.useEffect(() => {
     table.getColumn("montant")?.setFilterValue(minMax);
-    // table.getColumn("montant")?.set
   }, [minMax]);
 
   return (
-    <div className=" ">
+    <div className="">
       <div className="rounded-xl  bg-white  p-4 shadow-md">
-        <div className=" no-print  text-[#969696] flex flex-col items-center justify-center  gap-2   ">
+        <div className="print:hidden text-[#969696] flex flex-col items-center justify-center  gap-2   ">
           <div className="flex gap-2 px-3  no-scroll-bar    items-center justify-start  w-full overflow-x-auto  ">
             <div className="flex items-center ">
               <Input
@@ -183,9 +183,8 @@ export function DataTable<TData, TValue>({
             <DatePickerWithRange onDateChange={onDateChange} />
           </div>
         </div>
-
         <div className="bg-[#E9EEF0] space-y-4 rounded-t-xl p-4 ">
-          <h1 className="text-xl font-medium">Liste des chèques en caisse</h1>
+          <h1 className="text-xl font-medium">Liste des Réglement</h1>
           <div className="text-sm flex items-center justify-start gap-2">
             <span className="font-semibold"> Total montant :</span>
             <span className="text-primary font-bold">
@@ -199,7 +198,7 @@ export function DataTable<TData, TValue>({
             <HandCoins size={17} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="ml-auto print:hidden">
+                <Button variant="ghost" className="ml-auto  print:hidden">
                   <Menu />
                 </Button>
               </DropdownMenuTrigger>
@@ -274,7 +273,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center print:hidden justify-end space-x-2 py-4">
+      <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
@@ -282,7 +281,6 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          className="print:hidden"
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
@@ -291,7 +289,6 @@ export function DataTable<TData, TValue>({
         <Button
           variant="outline"
           size="sm"
-          className="print:hidden"
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >

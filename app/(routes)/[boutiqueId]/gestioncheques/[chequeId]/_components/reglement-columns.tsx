@@ -2,25 +2,34 @@
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+
+import { ColumnDef } from "@tanstack/react-table";
+
+import {
+  CheckCheck,
+  ChevronsUpDown,
+  CircleAlert,
+  CircleCheckBigIcon,
+  MoreHorizontal,
+} from "lucide-react";
+import Link from "next/link";
+import { Cheque, Reglement } from "@prisma/client";
+
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Store } from "lucide-react";
-
-import { ChevronsUpDown } from "lucide-react";
-import Link from "next/link";
-import { Cheque } from "@prisma/client";
 import { ParamsHook } from "@/hooks/use-parmas";
-import { DeleteCheque } from "@/actions/cheque-actions/delete-cheque";
-import { Badge } from "@/components/ui/badge";
-import Alerte from "@/components/alerte";
+import { DeleteReglement } from "@/actions/cheque-actions/reglement-actions/delete-reglement";
 import { useAlert } from "@/hooks/use-alerte";
+import Alerte from "@/components/alerte";
+import { space } from "postcss/lib/list";
+import { Span } from "next/dist/trace";
 
-export const ChequeColumns: ColumnDef<Cheque>[] = [
+export const ReglementColumns: ColumnDef<Reglement & { cheque: Cheque }>[] = [
   {
     id: "select",
     cell: ({ row }) => (
@@ -28,7 +37,7 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value: any) => row.toggleSelected(!!value)}
         aria-label="Select row"
-        className="border bg-white  rounded-lg print:hidden"
+        className="border bg-white  rounded-lg"
       />
     ),
     enableSorting: false,
@@ -36,7 +45,7 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
   },
 
   {
-    accessorKey: "codeBanque",
+    accessorKey: "cheque.codeBanque",
     id: "codeBanque",
     header: ({ column }) => {
       return (
@@ -53,14 +62,14 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
     cell: ({ row }) => {
       return (
         <span>
-          <Badge variant={"default"}>{row.original.codeBanque}</Badge>
+          <Badge variant={"default"}>{row.original.cheque.codeBanque}</Badge>
         </span>
       );
     },
   },
 
   {
-    accessorKey: "nche",
+    accessorKey: "cheque.nche",
     id: "nche",
     header: ({ column }) => {
       return (
@@ -75,12 +84,12 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
       );
     },
     cell: ({ row }) => {
-      return <span>{row.original.nche}</span>;
+      return <span>{row.original.cheque.nche}</span>;
     },
   },
 
   {
-    accessorKey: "lib",
+    accessorKey: "cheque.lib",
     id: "lib",
     header: ({ column }) => {
       return (
@@ -95,12 +104,13 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
       );
     },
     cell: ({ row }) => {
-      return <span>{row.original.lib}</span>;
+      return <span>{row.original.cheque.lib}</span>;
     },
   },
 
   {
-    accessorKey: "montant",
+    accessorKey: "cheque.montant",
+    id: "montant",
     header: ({ column }) => {
       return (
         <Button
@@ -114,13 +124,14 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
       );
     },
     cell: ({ row }) => {
-      return <span className="">{row.original.montant}</span>;
+      return <span className="">{row.original.cheque.montant}</span>;
     },
     enableGrouping: true,
   },
 
   {
-    accessorKey: "date",
+    accessorKey: "cheque.date",
+    id: "date",
     header: ({ column }) => {
       return (
         <Button
@@ -134,19 +145,20 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
       );
     },
     cell: ({ row }) => {
-      return <span>{row.original.date.toLocaleDateString()}</span>;
+      return <span>{row.original.cheque.date.toLocaleDateString()}</span>;
     },
     filterFn: (rows, id, filterValue) => {
       return (
-        rows.original.date.setHours(0, 0, 0, 0) >=
+        rows.original.cheque.date.setHours(0, 0, 0, 0) >=
           filterValue.from.setHours(0, 0, 0, 0) &&
-        rows.original.date.setHours(0, 0, 0, 0) <=
+        rows.original.cheque.date.setHours(0, 0, 0, 0) <=
           filterValue.to.setHours(0, 0, 0, 0)
       );
     },
   },
   {
-    accessorKey: "ver",
+    accessorKey: "cheque.ver",
+    id: "ver",
     header: ({ column }) => {
       return (
         <Button
@@ -162,7 +174,36 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
   },
 
   {
-    accessorKey: "codeBoutique",
+    accessorKey: "cheque.statusPayement",
+    id: "statusPatyement",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className=" text-start p-0"
+        >
+          Status
+          <ChevronsUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <span>
+          {row.original.cheque.statusPayement ? (
+            <CircleCheckBigIcon className="text-green-500" size={20} />
+          ) : (
+            <CircleAlert className="text-yellow-500" size={20} />
+          )}
+        </span>
+      );
+    },
+  },
+
+  {
+    accessorKey: "cheque.codeBoutique",
+    id: "codeBoutique",
     header: ({ column }) => {
       return (
         <Button
@@ -179,7 +220,7 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
       return (
         <div>
           <Badge className="" variant={"secondary"}>
-            {row.original.codeBoutique.toUpperCase()}
+            {row.original.cheque.codeBoutique.toUpperCase()}
           </Badge>
         </div>
       );
@@ -187,7 +228,8 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
   },
 
   {
-    accessorKey: "payement",
+    accessorKey: "cheque.payement",
+    id: "payement",
     header: ({ column }) => {
       return (
         <Button
@@ -201,12 +243,12 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
       );
     },
     cell: ({ row }) => {
-      return <div>{row.original.payement}</div>;
+      return <div>{row.original.cheque.payement}</div>;
     },
   },
 
   {
-    accessorKey: "restapaye",
+    accessorKey: "cheque.payement",
     header: ({ column }) => {
       return (
         <Button
@@ -220,11 +262,57 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
       );
     },
     cell: ({ row }) => {
-      return <div>{row.original.restapaye}</div>;
+      return <div>{row.original.cheque.restapaye}</div>;
     },
   },
+
   {
-    accessorKey: "type",
+    accessorKey: "montantPaye",
+    id: "montantPaye",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className=" text-start p-0"
+        >
+          Montant Payé
+          <ChevronsUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return <div>-{row.original.montantPaye}</div>;
+    },
+  },
+
+  {
+    accessorKey: "method",
+    id: "method",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className=" text-start p-0"
+        >
+          Method
+          <ChevronsUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      return (
+        <div>
+          <Badge variant={"secondary"}>{row.original.method}</Badge>
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "cheque.type",
+    id: "type",
     header: ({ column }) => {
       return (
         <Button
@@ -238,12 +326,12 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
       );
     },
     cell: ({ row }) => {
-      return <div>{row.original.type}</div>;
+      return <div>{row.original.cheque.type}</div>;
     },
   },
 
   {
-    accessorKey: "dateBoutique",
+    accessorKey: "dateReglement",
     header: ({ column }) => {
       return (
         <Button
@@ -251,51 +339,13 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className=" text-start p-0"
         >
-          Date Boutique
+          Date Réglement
           <ChevronsUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ row }) => {
-      return <span>{row.original.dateBoutique.toLocaleString()}</span>;
-    },
-  },
-
-  {
-    accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className=" text-start p-0"
-        >
-          Date Création
-          <ChevronsUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      return <span>{row.original.createdAt.toLocaleString()}</span>;
-    },
-  },
-
-  {
-    accessorKey: "updatedAt",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className=" text-start p-0"
-        >
-          Dérniére Modification
-          <ChevronsUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      return <span>{row.original.updatedAt.toLocaleString()}</span>;
+      return <span>{row.original.dateReglement.toLocaleString()}</span>;
     },
   },
 
@@ -304,6 +354,7 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
     cell: ({ row }) => {
       const params = ParamsHook();
       const alr = useAlert();
+
       return (
         <>
           <DropdownMenu>
@@ -317,28 +368,27 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
               className="bg-white z-50 mb-3 shadow-lg p-4 rounded-xl  font-semibold"
               align="end"
             >
-              <DropdownMenuItem className="hover:text-primary p-2 focus:outline-none">
-                <Link
-                  href={`/${params.boutiqueId}/gestioncheques/${row.original.id}`}
-                >
-                  Edit
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="hover:text-primary p-2 focus:outline-none">
-                <Link
-                  href={`/${params.boutiqueId}/gestioncheques/${row.original.id}/reglement`}
-                >
-                  Réglement
-                </Link>
+              <DropdownMenuItem className="hover:text-primary  focus:outline-none">
+                {row.original.cheque.statusPayement ? (
+                  <span className="flex items-center justify-items-center  gap-2">
+                    <span>Payé</span> <CheckCheck size={20} />
+                  </span>
+                ) : (
+                  <Link
+                    href={`/${params.boutiqueId}/gestioncheques/${row.original.cheque.id}/reglement`}
+                  >
+                    Réglement
+                  </Link>
+                )}
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="hover:text-primary p-2 focus:outline-none cursor-pointer"
                 onClick={() => {
                   alr.setOpen();
-                  alr.setModule("Cheque");
+                  alr.setModule("Reglement");
                   alr.setCodeBoutique(params.boutiqueId as string);
                   alr.setId(row.original.id);
                 }}
+                className=" cursor-pointer"
               >
                 Delete
               </DropdownMenuItem>

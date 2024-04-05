@@ -22,21 +22,38 @@ model Cheque{
   lib String 
   montant Float
   date DateTime
+  statusPayement Boolean  @default(false)
+  dateBoutique DateTime 
   ver String?
+  restapaye Float   
   codeBoutique String @db.VarChar(4)
-  paye Float?
+  payement Float @default(0)
   type String?
   nver String? @db.VarChar(7)
+  reglement Reglement[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Reglement {
+  id            String    @id @default(cuid())
+  method method
+  montantPaye Float
+  cheque   Cheque @relation(fields: [chequeId], references: [id], onDelete: Cascade, onUpdate: Cascade) 
+  chequeId String
+  dateReglement DateTime
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
 
 
-
-
-
-
-
+enum method {
+  ESPECE
+  CHEQUE
+  OR
+  AVOIR
+  AUTRE
+} 
 
 
 

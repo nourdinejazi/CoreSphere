@@ -12,8 +12,11 @@ export const ChequeSchema = z.object({
 
   nche: z
     .string()
-    .min(1, {
-      message: "Le numéro de chèque est requis",
+    .regex(/^\d+$/, {
+      message: "Le numéro de chèque doit être numerique",
+    })
+    .length(7, {
+      message: "Le numéro de chèque doit être de 7 caractères",
     })
     .max(7, {
       message: "Le numéro de chèque doit être inférieur à 7 caractères",
@@ -21,8 +24,27 @@ export const ChequeSchema = z.object({
   lib: z.string().min(1, {
     message: "Le libellé est requis",
   }),
-  montant: z.coerce.number().refine((value) => value > 0, {
-    message: "Le montant doit être un nombre positif",
-  }),
+  montant: z.coerce
+    .number()
+    .multipleOf(0.001)
+    .refine((value) => value > 0, {
+      message: "Le montant doit être un nombre positif",
+    }),
   date: z.date(),
+  dateBoutique: z.date(),
+});
+
+export const reglementSchema = z.object({
+  montantPaye: z.coerce
+    .number()
+    .multipleOf(0.001)
+    .refine((value) => value > 0, {
+      message: "Le montant doit être un nombre positif",
+    }),
+  method: z
+    .enum(["CHEQUE", "ESPECE", "OR", "AVOIR", "AUTRE"])
+    .refine((value) => value !== undefined, {
+      message: "You must choose a value for followUp",
+    }),
+  dateReglement: z.date(),
 });

@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 const Nav = () => {
   return (
-    <div className="w-full  bg-white shadow-md rounded-b-xl">
+    <div className="w-full no-print bg-white shadow-md rounded-b-xl">
       <div className="w-full h-[70px] flex items-center justify-start gap-8 p-12 ">
         <Link href={"/"}>
           <div className="flex flex-col gap-2 items-center justify-center  ">
