@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import AnimatedLink from "./animated-link";
 const SecondaryMainNav = () => {
   const pathname = usePathname();
 
@@ -13,7 +14,7 @@ const SecondaryMainNav = () => {
           ? `/${pathname.split("/")[1]}/gestioncheques`
           : "/",
       label: "Liste des chèques",
-      active: pathname.includes(`/gestioncheques`),
+      active: pathname.split("/").length == 3,
     },
     {
       href:
@@ -32,11 +33,11 @@ const SecondaryMainNav = () => {
           key={route.href}
           href={route.href}
           className={cn(
-            "text-sm font-medium transition-colors text-primary underline ",
-            route.active ? "font-semibold " : "text-muted-foreground"
+            "text-sm font-medium transition-colors text-primary  ",
+            route.active && "font-bold  "
           )}
         >
-          {route.label}
+          <AnimatedLink text={route.label} selected={route.active} />
         </Link>
       ))}
     </nav>
