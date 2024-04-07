@@ -73,7 +73,7 @@ export const AddReglement = async (
 
     revalidatePath(`/${codeBoutique}/gestioncheques/new`);
 
-    return { success: "Chèque ajouté avec succès !" };
+    return { success: "Réglement ajouté avec succès !" };
   } catch (error) {
     console.log(error);
     return { error: "Something Went wrong!" };
