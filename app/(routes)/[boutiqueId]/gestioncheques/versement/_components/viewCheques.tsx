@@ -29,7 +29,7 @@ const ViewCheques = ({ data }: { data: Versement & { cheque: Cheque[] } }) => {
       <DialogTrigger className="">
         <Eye />
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="w-auto max-w-full">
         <DialogHeader>
           <DialogTitle className="mb-2">Bordereau R.N°{data.num}</DialogTitle>
           <span className="text-sm flex gap-2">
