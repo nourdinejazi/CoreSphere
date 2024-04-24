@@ -8,11 +8,23 @@ const GestionChequeClient = async () => {
   const data = await db.cheque.findMany({
     where: {
       statusPayement: false,
+      OR: [
+        {
+          type: {
+            equals: null,
+          },
+        },
+        {
+          type: {
+            not: "V_C",
+          },
+        },
+      ],
     },
   });
 
   return (
-    <div className="k">
+    <div>
       <Alerte />
       <DataTable data={data} columns={ChequeColumns} />
     </div>

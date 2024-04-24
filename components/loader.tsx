@@ -1,7 +1,7 @@
 const Ld = () => {
   return (
-    <div className="loader ">
-      <div className="bar1"></div>
+    <div className="loader  ">
+      <div className="bar1 "></div>
       <div className="bar2"></div>
       <div className="bar3"></div>
       <div className="bar4"></div>

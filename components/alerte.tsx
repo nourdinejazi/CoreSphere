@@ -1,5 +1,6 @@
 "use client";
 
+import { DeleteBourd } from "@/actions/bourd-actions/delete-bourd";
 import { DeleteCheque } from "@/actions/cheque-actions/delete-cheque";
 import { DeleteReglement } from "@/actions/cheque-actions/reglement-actions/delete-reglement";
 import {
@@ -22,8 +23,12 @@ const Alerte = () => {
   const handleWho = () => {
     if (alr.module === "Cheque") {
       return DeleteCheque(alr.codeBoutique, alr.id);
-    } else {
+    } else if (alr.module === "Reglement") {
       return DeleteReglement(alr.codeBoutique, alr.id);
+    } else if (alr.module === "Versement") {
+      return DeleteBourd(alr.id, alr.codeBoutique);
+    } else {
+      return Promise.reject("Module not found");
     }
   };
 

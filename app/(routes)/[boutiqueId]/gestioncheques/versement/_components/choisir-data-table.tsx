@@ -29,23 +29,39 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import FilterInput from "@/components/filter_input";
 import { DatePickerWithRange } from "@/components/date-range-picker";
 import { DateRange } from "react-day-picker";
-import { HandCoins, Menu } from "lucide-react";
+import { Coins, HandCoins, Menu, Sigma } from "lucide-react";
 import { DataTablePagination } from "@/components/data-table-pagination";
+import { ControllerRenderProps } from "react-hook-form";
+import { Cheque } from "@prisma/client";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  field: ControllerRenderProps<
+    {
+      codeBanque: string;
+      num: string;
+      dateVersement: Date;
+      cheque: Cheque[];
+    },
+    "cheque"
+  >;
+  initialValues: Cheque[];
+  unselectId: string | null;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  field,
+  initialValues,
+  unselectId,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = useState({});
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -55,7 +71,7 @@ export function DataTable<TData, TValue>({
   );
 
   const [globalFilter, setGlobalFilter] = React.useState<string>("");
-
+  const ref = useRef<HTMLDivElement>(null);
   const [minMax, setMinMax] = React.useState(["", ""]);
 
   const [columnVisibility, setColumnVisibility] =
@@ -64,7 +80,6 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
@@ -84,6 +99,9 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const scrollToRef = () => {
+    if (ref.current) ref.current.scrollIntoView({ behavior: "smooth" });
+  };
   const onMinChange = (min: string) => {
     setMinMax((prev) => [min, prev[1]]);
   };
@@ -103,12 +121,28 @@ export function DataTable<TData, TValue>({
 
   React.useEffect(() => {
     table.getColumn("montant")?.setFilterValue(minMax);
-    // table.getColumn("montant")?.set
   }, [minMax]);
 
+  React.useEffect(() => {
+    const selectedRow = table
+      .getSelectedRowModel()
+      .rows.find((row) => (row.original as { id: string }).id === unselectId);
+    if (selectedRow) {
+      selectedRow.toggleSelected();
+    }
+  }, [unselectId]);
+
+  React.useEffect(() => {
+    field.onChange([
+      ...initialValues,
+      ...table.getSelectedRowModel().rows.map((row) => row.original),
+    ]);
+    scrollToRef();
+  }, [rowSelection]);
+
   return (
-    <div className=" pb-16 ">
-      <div className="rounded-t-xl   bg-white pt-4 px-4 print:p-0 shadow-md">
+    <div className="   ">
+      <div className="rounded-t-xl   bg-white pt-4  print:p-0  ">
         <div className=" no-print  text-[#969696] flex flex-col items-center justify-center  gap-2   ">
           <div className="flex gap-2 px-3  no-scroll-bar    items-center justify-start  w-full overflow-x-auto  ">
             <div className="flex items-center ">
@@ -186,9 +220,9 @@ export function DataTable<TData, TValue>({
         </div>
 
         <div className="bg-[#E9EEF0] print:bg-white space-y-4 rounded-t-xl p-4  ">
-          <h1 className="text-xl font-medium">Liste des chèques en caisse</h1>
+          <h1 className="text-xl font-medium">Choisir les chèques à verser</h1>
           <div className="text-sm flex items-center justify-start gap-2">
-            <span className="font-semibold"> Total montant :</span>
+            <span className="font-semibold"> Total des chéques versable :</span>
             <span className="text-primary font-bold">
               {table
                 .getFilteredRowModel()
@@ -197,7 +231,25 @@ export function DataTable<TData, TValue>({
                   0
                 )}
             </span>
-            <HandCoins size={17} />
+            <HandCoins size={17} />|
+            <div className=" font-bold">
+              <span>Total des chéques choisis : </span>
+              <span className="text-primary font-bold">
+                {table
+                  .getFilteredSelectedRowModel()
+                  .rows.reduce((total, current) => {
+                    return total + (current.getValue("montant") as number);
+                  }, 0)}
+              </span>
+            </div>
+            <Coins size={17} />|
+            <div className=" font-bold">
+              <span>Nombre des chéques choisis : </span>
+              <span className="text-primary font-bold">
+                {table.getFilteredSelectedRowModel().rows.length}
+              </span>
+            </div>
+            <Sigma size={17} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="ml-auto print:hidden">
@@ -276,6 +328,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       <DataTablePagination table={table} />
+      <div ref={ref} />
     </div>
   );
 }

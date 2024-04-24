@@ -1,5 +1,7 @@
 import * as z from "zod";
 import { banks } from "@/data/jdata";
+import vbanks from "@/data/vbanks.json";
+import { Cheque } from "@prisma/client";
 export const ChequeSchema = z.object({
   codeBanque: z
     .string()
@@ -46,5 +48,34 @@ export const reglementSchema = z.object({
     .refine((value) => value !== undefined, {
       message: "You must choose a value for followUp",
     }),
-  dateReglement: z.date(),
+  dateReglement: z.date().refine((d) => d <= new Date(), {
+    message:
+      "La date de reglement ne peut pas être supérieure à la date d'aujourd'hui",
+  }),
+});
+
+export const versementSchema = z.object({
+  codeBanque: z
+    .string()
+    .refine(
+      (value) => vbanks.some((bank) => bank.CODB === value.toUpperCase()),
+      {
+        message: "Code banque is invalid",
+      }
+    ),
+  num: z
+    .string()
+    .regex(/^\d+$/, {
+      message: "Le numéro de chèque doit être numerique",
+    })
+    .length(7, {
+      message: "Le numéro de chèque doit être de 7 caractères",
+    })
+    .max(7, {
+      message: "Le numéro de chèque doit être inférieur à 7 caractères",
+    }),
+  dateVersement: z.date(),
+  cheque: z.array(z.any()).min(1, {
+    message: "Vous devez sélectionner au moins un chèque.",
+  }),
 });

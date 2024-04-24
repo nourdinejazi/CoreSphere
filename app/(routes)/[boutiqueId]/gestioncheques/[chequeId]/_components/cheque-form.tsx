@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
@@ -20,16 +20,14 @@ import { Button } from "@/components/ui/button";
 
 import { Cheque } from "@prisma/client";
 
-import dynamic from "next/dynamic";
-
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, Check, ChevronsUpDown } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown, Ghost } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
+import { format, set } from "date-fns";
 import fr from "date-fns/locale/fr";
 import { cn } from "@/lib/utils";
 import SmallSpinner from "@/components/small-spinner";
@@ -55,6 +53,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { checkNche } from "@/actions/check-actions.ts/nche-check";
+import Ld from "@/components/loader";
 
 interface ChequeFormProps {
   initialData: Cheque | null;
@@ -68,7 +68,11 @@ const ChequeForm = ({
   recentCheques,
 }: ChequeFormProps) => {
   const [isPending, startTransition] = useTransition();
+  const [checkPending, startCheck] = useTransition();
+  const ncheRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
+  const [ncheChecked, setNcheChecked] = useState(true);
+  const [validateCheck, setValidateCheck] = useState(false);
   const router = useRouter();
   const params = useParams();
 
@@ -84,50 +88,74 @@ const ChequeForm = ({
       },
   });
 
+  const ncheChecking = async (nche: string) => {
+    return new Promise((resolve) => {
+      startCheck(() => {
+        checkNche(nche.padStart(7, "0")).then((ncheFound) => {
+          if (ncheFound && !validateCheck) {
+            form.setError("nche", {
+              type: "manual",
+              message: "Ce chèque existe déjà !",
+            });
+            setNcheChecked(false);
+            resolve(false);
+          } else {
+            form.clearErrors("nche");
+            setNcheChecked(true);
+            resolve(true);
+            form.trigger("nche");
+          }
+        });
+      });
+    });
+  };
 
   const onSubmit = async (values: z.infer<typeof ChequeSchema>) => {
-    startTransition(() => {
-      if (initialData) {
-        toast.promise(
-          () =>
-            UpdateCheque(
-              values,
-              params.boutiqueId as string,
-              params.chequeId as string
-            ).then((data) => {
-              if (data?.error) {
-                return Promise.reject(data.error);
-              } else {
-                return Promise.resolve(data.success);
-              }
-            }),
-          {
-            loading: "Mise à jour en cours...",
-            error: (err) => err,
-            success: (data) => data,
-          }
-        );
-      } else {
-        toast.promise(
-          () =>
-            AddCheque(values, params.boutiqueId as string).then((data) => {
-              if (data?.error) {
-                return Promise.reject(data.error);
-              } else {
-                return Promise.resolve(data.success);
-              }
-            }),
-          {
-            loading: "Ajout en cours...",
-            error: (err) => err,
-            success: (data) => data,
-          }
-        );
-      }
+    console.log("called");
+    await ncheChecking(values.nche).then((passed) => {
+      if (!passed && !validateCheck) return;
+      startTransition(() => {
+        if (initialData) {
+          toast.promise(
+            () =>
+              UpdateCheque(
+                values,
+                params.boutiqueId as string,
+                params.chequeId as string
+              ).then((data) => {
+                if (data?.error) {
+                  return Promise.reject(data.error);
+                } else {
+                  return Promise.resolve(data.success);
+                }
+              }),
+            {
+              loading: "Mise à jour en cours...",
+              error: (err) => err,
+              success: (data) => data,
+            }
+          );
+        } else {
+          console.log(ncheChecked, "passed");
+          toast.promise(
+            () =>
+              AddCheque(values, params.boutiqueId as string).then((data) => {
+                if (data?.error) {
+                  return Promise.reject(data.error);
+                } else {
+                  return Promise.resolve(data.success);
+                }
+              }),
+            {
+              loading: "Ajout en cours...",
+              error: (err) => err,
+              success: (data) => data,
+            }
+          );
+        }
+      });
+      setValidateCheck(false);
     });
-    if (initialData) {
-      router.push(`/${params.boutiqueId}/gestioncheques`);
-    }
   };
 
   return (
@@ -212,24 +240,42 @@ const ChequeForm = ({
                 <FormItem className="flex flex-col items-start justify-center  ">
                   <FormLabel className="text-base">Num Chéque</FormLabel>
                   <FormControl>
-                    <Input
-                      {...field}
-                      onBlur={(e) => {
-                        if (e.target.value.length < 7) {
-                          form.setValue(
-                            "nche",
-                            e.target.value.padStart(7, "0")
-                          );
-                        }
-                      }}
-                      className={"max-w-[400px]"}
-                      disabled={isPending || initialData !== null}
-                      placeholder=""
-                      type="text"
-                    />
+                    <div className="flex items-center justify-center gap-2">
+                      <Input
+                        {...field}
+                        ref={ncheRef}
+                        onBlur={(e) => {
+                          if (e.target.value.length < 7) {
+                            field.onChange(e.target.value.padStart(7, "0"));
+                          }
+                          ncheChecking(field.value);
+                        }}
+                        className={"max-w-[400px]"}
+                        disabled={isPending || initialData !== null}
+                        placeholder=""
+                        type="text"
+                      />
+
+                      {checkPending && <Ld />}
+                    </div>
                   </FormControl>
 
                   <FormMessage />
+                  {!ncheChecked && (
+                    <div>
+                      <Button
+                        variant={"ghost"}
+                        onClick={() => {
+                          setNcheChecked(true);
+                          setValidateCheck(true);
+                          form.clearErrors("nche");
+                        }}
+                        className="underline p-0 hover:bg-transparent hover:text-primary"
+                      >
+                        Cliquer ici pour continuer
+                      </Button>
+                    </div>
+                  )}
                 </FormItem>
               )}
             />
@@ -365,15 +411,16 @@ const ChequeForm = ({
               Cancel
             </Button>
             <Button
-              disabled={isPending}
+              disabled={isPending || !ncheChecked}
               type="submit"
               className="flex items-center justify-center gap-2"
             >
+              {!ncheChecked && "Valider le numero de chèque!"}
               {isPending && <SmallSpinner />}
-              {initialData && !isPending && "Update Cheque"}
-              {initialData && isPending && "Updating Cheque..."}
-              {!initialData && !isPending && "Create Cheque"}
-              {!initialData && isPending && "Creating Cheque..."}
+              {initialData && !isPending && ncheChecked && "Update Cheque"}
+              {initialData && isPending && ncheChecked && "Updating Cheque..."}
+              {!initialData && !isPending && ncheChecked && "Create Cheque"}
+              {!initialData && isPending && ncheChecked && "Creating Cheque..."}
             </Button>
           </div>
         </form>

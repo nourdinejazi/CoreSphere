@@ -5,8 +5,9 @@ import Link from "next/link";
 
 import GestionChequeClient from "@/components/gestion-cheque-client";
 import { Suspense } from "react";
+import VersementClient from "./_components/versementClient";
 
-const GestionChequePage = async ({
+const VersementPage = async ({
   params,
 }: {
   params: { boutiqueId: string };
@@ -16,8 +17,8 @@ const GestionChequePage = async ({
       <div className="p-5   no-print flex items-center justify-between ">
         <PathSlash />
 
-        <Link href={`/${params.boutiqueId}/gestioncheques/new`}>
-          <Button>Ajouter un cheque</Button>
+        <Link href={`/${params.boutiqueId}/gestioncheques/versement/new`}>
+          <Button>Ajouter un Versement</Button>
         </Link>
       </div>
       <Suspense
@@ -27,10 +28,10 @@ const GestionChequePage = async ({
           </div>
         }
       >
-        <GestionChequeClient />
+        <VersementClient />
       </Suspense>
     </div>
   );
 };
 
-export default GestionChequePage;
+export default VersementPage;

@@ -24,6 +24,14 @@ const SecondaryMainNav = () => {
       label: "Liste des règlements",
       active: pathname.includes(`/gestioncheques/reglement`),
     },
+    {
+      href:
+        pathname.split("/").length > 0
+          ? `/${pathname.split("/")[1]}/gestioncheques/versement`
+          : "/",
+      label: "Liste des vérsements",
+      active: pathname.includes(`/gestioncheques/versement`),
+    },
   ];
 
   return (

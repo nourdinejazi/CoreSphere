@@ -37,6 +37,7 @@ import { DatePickerWithRange } from "@/components/date-range-picker";
 import { DateRange } from "react-day-picker";
 import { HandCoins, Menu } from "lucide-react";
 import { DataTablePagination } from "@/components/data-table-pagination";
+import { Cheque } from "@prisma/client";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -56,15 +57,12 @@ export function DataTable<TData, TValue>({
 
   const [globalFilter, setGlobalFilter] = React.useState<string>("");
 
-  const [minMax, setMinMax] = React.useState(["", ""]);
-
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
 
   const table = useReactTable({
     data,
     columns,
-
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onRowSelectionChange: setRowSelection,
@@ -74,7 +72,7 @@ export function DataTable<TData, TValue>({
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onGlobalFilterChange: setGlobalFilter,
-
+    filterFromLeafRows: true,
     state: {
       rowSelection,
       columnFilters,
@@ -84,40 +82,30 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  const onMinChange = (min: string) => {
-    setMinMax((prev) => [min, prev[1]]);
-  };
-
-  const onMaxChange = (max: string) => {
-    setMinMax((prev) => [prev[0], max]);
-  };
-
   const onDateChange = (newDateRange: DateRange | undefined) => {
     if (newDateRange?.from && newDateRange?.to) {
-      table.getColumn("date")?.setFilterValue(newDateRange);
+      table.getColumn("dateVersement")?.setFilterValue(newDateRange);
     }
     if (!newDateRange?.from && !newDateRange?.to) {
-      table.getColumn("date")?.setFilterValue("");
+      table.getColumn("dateVersement")?.setFilterValue("");
     }
   };
-
-  React.useEffect(() => {
-    table.getColumn("montant")?.setFilterValue(minMax);
-    // table.getColumn("montant")?.set
-  }, [minMax]);
 
   return (
     <div className=" pb-16 ">
       <div className="rounded-t-xl   bg-white pt-4 px-4 print:p-0 shadow-md">
         <div className=" no-print  text-[#969696] flex flex-col items-center justify-center  gap-2   ">
           <div className="flex gap-2 px-3  no-scroll-bar    items-center justify-start  w-full overflow-x-auto  ">
-            <div className="flex items-center ">
+            <div className="flex items-center py-4">
               <Input
-                placeholder="Global Filter"
-                value={globalFilter ?? ""}
-                onChange={(event) => setGlobalFilter(event.target.value)}
+                placeholder="Filtre global sur chéque"
+                value={
+                  (table.getColumn("cheque")?.getFilterValue() as string) ?? ""
+                }
+                onChange={(event) =>
+                  table.getColumn("cheque")?.setFilterValue(event.target.value)
+                }
                 className="max-w-sm text-black"
-                type="text"
               />
             </div>
 
@@ -137,65 +125,38 @@ export function DataTable<TData, TValue>({
               />
             </div>
 
-            <div className="flex items-center py-4">
+            <div className="flex items-center ">
               <Input
-                placeholder="Num Chéque"
+                placeholder="Numero Bordereau"
                 value={
-                  (table.getColumn("nche")?.getFilterValue() as string) ?? ""
+                  (table.getColumn("num")?.getFilterValue() as string) ?? ""
                 }
                 onChange={(event) =>
-                  table.getColumn("nche")?.setFilterValue(event.target.value)
+                  table.getColumn("num")?.setFilterValue(event.target.value)
                 }
                 className="max-w-sm text-black"
               />
             </div>
 
-            <div className="flex items-center py-4">
-              <Input
-                placeholder="Libellé"
-                value={
-                  (table.getColumn("lib")?.getFilterValue() as string) ?? ""
-                }
-                onChange={(event) =>
-                  table.getColumn("lib")?.setFilterValue(event.target.value)
-                }
-                className="max-w-sm text-black"
-              />
-            </div>
-
-            <div className="flex items-center gap-2 py-4">
-              <Input
-                placeholder="min"
-                value={minMax[0]}
-                onChange={(event) => onMinChange(event.target.value)}
-                className="max-w-sm text-black"
-                min="0"
-                type="number"
-              />
-              <Input
-                placeholder="max"
-                value={minMax[1]}
-                onChange={(event) => onMaxChange(event.target.value)}
-                className="max-w-sm text-black"
-                type="number"
-                min="0"
-              />
-            </div>
             <DatePickerWithRange onDateChange={onDateChange} />
           </div>
         </div>
 
         <div className="bg-[#E9EEF0] print:bg-white space-y-4 rounded-t-xl p-4  ">
-          <h1 className="text-xl font-medium">Liste des chèques en caisse</h1>
+          <h1 className="text-xl font-medium">Liste des Vérsement</h1>
           <div className="text-sm flex items-center justify-start gap-2">
             <span className="font-semibold"> Total montant :</span>
             <span className="text-primary font-bold">
-              {table
-                .getFilteredRowModel()
-                .rows.reduce(
-                  (total, row) => total + Number(row.getValue("montant")),
-                  0
-                )}
+              {table.getFilteredRowModel().rows.reduce((total, current) => {
+                return (
+                  total +
+                  (
+                    current.original as { cheque: { montant: number }[] }
+                  ).cheque.reduce((total, current) => {
+                    return total + current.montant;
+                  }, 0)
+                );
+              }, 0)}
             </span>
             <HandCoins size={17} />
             <DropdownMenu>

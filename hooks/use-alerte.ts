@@ -4,11 +4,11 @@ interface AlertUseProps {
   open: boolean;
   codeBoutique: string;
   id: string;
-  module: "Reglement" | "Cheque" | null;
+  module: "Reglement" | "Cheque" | "Versement" | null;
   setOpen: () => void;
   setCodeBoutique: (codeBoutique: string) => void;
   setId: (id: string) => void;
-  setModule: (module: "Reglement" | "Cheque" | null) => void;
+  setModule: (module: "Reglement" | "Cheque" | "Versement" | null) => void;
 }
 
 export const AlertUse = create<AlertUseProps>((set) => ({

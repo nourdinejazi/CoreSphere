@@ -31,6 +31,10 @@ model Cheque{
   type String?
   nver String? @db.VarChar(7)
   reglement Reglement[]
+
+  versement  Versement? @relation(fields: [versementId], references: [id])
+  versementId String?
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -39,11 +43,21 @@ model Reglement {
   id            String    @id @default(cuid())
   method method
   montantPaye Float
-  cheque   Cheque @relation(fields: [chequeId], references: [id], onDelete: Cascade, onUpdate: Cascade) 
+  cheque   Cheque @relation(fields: [chequeId], references: [id]) 
   chequeId String
   dateReglement DateTime
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Versement {
+   id            String    @id @default(cuid())
+   codeBanque String  @db.VarChar(5)
+   dateVersement DateTime
+   num  String @db.VarChar(7)
+   cheque Cheque[]
+   createdAt   DateTime @default(now())
+   updatedAt   DateTime @updatedAt
 }
 
 

@@ -8,7 +8,7 @@ import { ChequeSchema } from "@/schemas/cheque-schemas";
 
 import { revalidatePath } from "next/cache";
 
-export const AddCheque= async (
+export const AddCheque = async (
   values: z.infer<typeof ChequeSchema>,
   codeBoutique: string
 ) => {
@@ -21,6 +21,16 @@ export const AddCheque= async (
 
   values = { ...validatedFields.data };
   try {
+    // const cheque = await db.cheque.findFirst({
+    //   where: {
+    //     nche: values.nche,
+    //   },
+    // });
+
+    // if (cheque) {
+    //   return { warning: "Ce chèque existe déjà !" };
+    // }
+
     await db.cheque.create({
       data: {
         lib: values.lib,
