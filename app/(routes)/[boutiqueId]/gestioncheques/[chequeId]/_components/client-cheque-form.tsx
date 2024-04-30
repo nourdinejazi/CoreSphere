@@ -18,7 +18,6 @@ const ClientListCheques = async ({ params }: { params: string }) => {
 
   return (
     <ResisableClient
-      params={params}
       defaultLayout={undefined}
       defaultCollapsed={true}
       navCollapsedSize={4}
