@@ -25,9 +25,9 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, Check, ChevronsUpDown, Ghost } from "lucide-react";
+import { CalendarIcon, Check, ChevronsUpDown, MoveLeft } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { format, set } from "date-fns";
+import { format } from "date-fns";
 import fr from "date-fns/locale/fr";
 import { cn } from "@/lib/utils";
 import SmallSpinner from "@/components/small-spinner";
@@ -55,6 +55,8 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { checkNche } from "@/actions/check-actions.ts/nche-check";
 import Ld from "@/components/loader";
+import { PathSlash } from "@/components/path-slash";
+import Link from "next/link";
 
 interface ChequeFormProps {
   initialData: Cheque | null;
@@ -159,11 +161,20 @@ const ChequeForm = ({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full ">
+      <div className="  m-4  no-print flex items-center justify-between   ">
+        <PathSlash />
+        <Link href={`/${params.boutiqueId}/gestioncheques`}>
+          <Button className="">
+            <MoveLeft size={20} />
+          </Button>
+        </Link>
+      </div>
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className=" p-8 bg-white mt-8 rounded-xl shadow-md"
+          className=" p-8  bg-white   rounded-xl shadow-md"
         >
           <div
             //  className="  flex items-start justify-center gap-5 p-4 flex-wrap   "

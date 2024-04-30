@@ -1,4 +1,5 @@
 "use client";
+
 import {
   ColumnDef,
   flexRender,
@@ -31,10 +32,14 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 import { Input } from "@/components/ui/input";
+
 import { DatePickerWithRange } from "@/components/date-range-picker";
 import { DateRange } from "react-day-picker";
-import { HandCoins, Menu } from "lucide-react";
+import { CircleCheck, HandCoins, Menu } from "lucide-react";
 import { DataTablePagination } from "@/components/data-table-pagination";
+import { DataTableFacetedFilter } from "./data-table-faceted-filter";
+import vbanks from "@/data/vbanks.json";
+import { CircleIcon, StopwatchIcon } from "@radix-ui/react-icons";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -92,10 +97,10 @@ export function DataTable<TData, TValue>({
 
   const onDateChange = (newDateRange: DateRange | undefined) => {
     if (newDateRange?.from && newDateRange?.to) {
-      table.getColumn("date")?.setFilterValue(newDateRange);
+      table.getColumn("dateVersement")?.setFilterValue(newDateRange);
     }
     if (!newDateRange?.from && !newDateRange?.to) {
-      table.getColumn("date")?.setFilterValue("");
+      table.getColumn("dateVersement")?.setFilterValue("");
     }
   };
 
@@ -105,10 +110,32 @@ export function DataTable<TData, TValue>({
   }, [minMax]);
 
   return (
-    <div className="  pb-16 px-2 rounded-t-xl ">
-      <div className="   bg-white rounded-t-xl pt-4 px-4 print:p-0 shadow-md">
+    <div className=" pb-16 ">
+      <div className="rounded-t-xl   bg-white pt-4 px-4 print:p-0 shadow-md">
         <div className=" no-print  text-[#969696] flex flex-col items-center justify-center  gap-2   ">
-          <div className="flex gap-2 px-3  no-scroll-bar    items-center justify-start  w-full overflow-x-auto  ">
+          <div className="flex gap-2 px-3  no-scroll-bar    items-center justify-start  w-full flex-wrap ">
+            <DatePickerWithRange onDateChange={onDateChange} />
+            <DataTableFacetedFilter
+              column={table.getColumn("banqueVersement")}
+              title="Banque de versement"
+              options={vbanks.map((bank) => ({
+                label: bank.CODB,
+                value: bank.CODB,
+              }))}
+            />
+
+            <DataTableFacetedFilter
+              column={table.getColumn("dateBanque")}
+              title="Status"
+              options={[
+                {
+                  label: "Pointé",
+                  value: "pointé",
+                  icon: CircleIcon,
+                },
+                { label: "Non pointé", value: "npointé", icon: StopwatchIcon },
+              ]}
+            />
             <div className="flex items-center ">
               <Input
                 placeholder="Global Filter"
@@ -119,30 +146,14 @@ export function DataTable<TData, TValue>({
               />
             </div>
 
-            <div className="flex items-center ">
-              <Input
-                placeholder="Code Banque"
-                value={
-                  (table.getColumn("codeBanque")?.getFilterValue() as string) ??
-                  ""
-                }
-                onChange={(event) =>
-                  table
-                    .getColumn("codeBanque")
-                    ?.setFilterValue(event.target.value)
-                }
-                className="max-w-sm text-black"
-              />
-            </div>
-
             <div className="flex items-center py-4">
               <Input
-                placeholder="Num Chéque"
+                placeholder="Num Bordereaux"
                 value={
-                  (table.getColumn("nche")?.getFilterValue() as string) ?? ""
+                  (table.getColumn("num")?.getFilterValue() as string) ?? ""
                 }
                 onChange={(event) =>
-                  table.getColumn("nche")?.setFilterValue(event.target.value)
+                  table.getColumn("num")?.setFilterValue(event.target.value)
                 }
                 className="max-w-sm text-black"
               />
@@ -179,21 +190,20 @@ export function DataTable<TData, TValue>({
                 min="0"
               />
             </div>
-            <DatePickerWithRange onDateChange={onDateChange} />
           </div>
         </div>
 
         <div className="bg-[#E9EEF0] print:bg-white space-y-4 rounded-t-xl p-4  ">
-          <h1 className="text-xl font-medium">Liste des chèques en caisse</h1>
+          <h1 className="text-xl font-medium">Pointage vérsement chéque</h1>
           <div className="text-sm flex items-center justify-start gap-2">
             <span className="font-semibold"> Total montant :</span>
             <span className="text-primary font-bold">
-              {table
+              {/* {table
                 .getFilteredRowModel()
                 .rows.reduce(
                   (total, row) => total + Number(row.getValue("montant")),
                   0
-                )}
+                )} */}
             </span>
             <HandCoins size={17} />
             <DropdownMenu>

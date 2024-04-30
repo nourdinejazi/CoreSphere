@@ -1,72 +1,28 @@
 "use client";
-
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { useState, useTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormField, FormItem, FormMessage } from "@/components/ui/form";
 
 import { Button } from "@/components/ui/button";
 
 import { Cheque, Versement } from "@prisma/client";
 
-import dynamic from "next/dynamic";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  CalendarIcon,
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsUpDown,
-  CircleCheckBig,
-} from "lucide-react";
+import { ChevronRight, CircleCheckBig } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import SmallSpinner from "@/components/small-spinner";
-import { ChequeSchema, versementSchema } from "@/schemas/cheque-schemas";
+import { versementSchema } from "@/schemas/cheque-schemas";
 
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import { AddCheque } from "@/actions/cheque-actions/add-cheque";
-import { UpdateCheque } from "@/actions/cheque-actions/update-cheque";
 import { toast } from "sonner";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import BourdForm from "../_components/bourd-form";
 
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import ChoisirForm from "../_components/choisir-form";
 import axios from "axios";
-import Ld from "@/components/loader";
 import { AddBourd } from "@/actions/bourd-actions/add-bourd";
 import { UpdateBourd } from "@/actions/bourd-actions/update-bourd";
 

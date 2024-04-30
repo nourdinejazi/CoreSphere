@@ -1,8 +1,8 @@
 import { Toaster } from "@/components/ui/sonner";
 import { CommandSearch } from "@/components/command-search";
-import Nav from "@/components/nav";
 import { ThemeProvider } from "@/components/theme-provider";
-import Ld from "@/components/loader";
+import Nav from "@/components/nav";
+import { ResisableClient } from "@/components/resisable-client";
 
 export default async function RootLayout({
   children,
@@ -36,7 +36,15 @@ export default async function RootLayout({
         <div className="w-full h-2 bg-primary" />
         <div className="">
           <Nav />
-          <div className="px-8 print:px-0  print:mx-0 mx-2">{children}</div>
+          <div className="  print:px-0   print:mx-0 ">
+            <ResisableClient
+              defaultLayout={undefined}
+              defaultCollapsed={true}
+              navCollapsedSize={4}
+            >
+              {children}
+            </ResisableClient>
+          </div>
         </div>
       </ThemeProvider>
     </>

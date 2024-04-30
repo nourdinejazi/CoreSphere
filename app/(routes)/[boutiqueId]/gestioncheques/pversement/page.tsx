@@ -1,13 +1,18 @@
-import ClientListCheques from "@/app/(routes)/[boutiqueId]/gestioncheques/_components/client-liste-cheques";
-import { Suspense } from "react";
+import { PathSlash } from "@/components/path-slash";
 
-const GestionChequePage = async ({
+import { Suspense } from "react";
+import PversementClient from "./_components/pversement-client";
+
+const PversementPage = async ({
   params,
 }: {
   params: { boutiqueId: string };
 }) => {
   return (
     <div>
+      <div className="p-5 print:hidden flex items-center justify-between ">
+        <PathSlash />
+      </div>
       <Suspense
         fallback={
           <div className="w-full  flex items-center justify-center h-[70vh] ">
@@ -15,10 +20,10 @@ const GestionChequePage = async ({
           </div>
         }
       >
-        <ClientListCheques params={params.boutiqueId} />
+        <PversementClient />
       </Suspense>
     </div>
   );
 };
 
-export default GestionChequePage;
+export default PversementPage;

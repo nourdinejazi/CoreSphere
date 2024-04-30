@@ -74,8 +74,36 @@ export const versementSchema = z.object({
     .max(7, {
       message: "Le numéro de chèque doit être inférieur à 7 caractères",
     }),
-  dateVersement: z.date(),
+  dateVersement: z.date().refine((d) => d <= new Date(), {
+    message:
+      "La date de reglement ne peut pas être supérieure à la date d'aujourd'hui",
+  }),
   cheque: z.array(z.any()).min(1, {
     message: "Vous devez sélectionner au moins un chèque.",
+  }),
+});
+
+export const PointageVersementSchema = z.object({
+  day: z.coerce.string().refine(
+    (value) => {
+      if (isNaN(Number(value))) return false;
+      return Number(value) >= 1 && Number(value) <= 31;
+    },
+    {
+      message: "Le jour doit être compris entre 1 et 31.",
+    }
+  ),
+  month: z.coerce.string().refine(
+    (value) => {
+      if (isNaN(Number(value))) return false;
+      return Number(value) >= 1 && Number(value) <= 12;
+    },
+    {
+      message: "Le jour doit être compris entre 1 et 12.",
+    }
+  ),
+  year: z.coerce.string().refine((value) => {
+    if (isNaN(Number(value))) return false;
+    return value.length === 4;
   }),
 });

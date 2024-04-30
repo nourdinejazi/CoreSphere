@@ -30,6 +30,7 @@ model Cheque{
   payement Float @default(0)
   type String?
   nver String? @db.VarChar(7)
+  dateBanque DateTime?
   reglement Reglement[]
 
   versement  Versement? @relation(fields: [versementId], references: [id])

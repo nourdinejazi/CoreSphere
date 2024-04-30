@@ -1,5 +1,3 @@
-import Nav from "@/components/nav";
-import SecondaryMainNav from "@/components/secondary-main-nav";
 import Link from "next/link";
 
 const NotFound = () => {

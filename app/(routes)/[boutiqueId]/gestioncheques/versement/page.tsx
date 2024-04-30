@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 
 import Link from "next/link";
 
-import GestionChequeClient from "@/components/gestion-cheque-client";
 import { Suspense } from "react";
 import VersementClient from "./_components/versementClient";
 

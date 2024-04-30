@@ -32,6 +32,14 @@ const SecondaryMainNav = () => {
       label: "Liste des vérsements",
       active: pathname.includes(`/gestioncheques/versement`),
     },
+    {
+      href:
+        pathname.split("/").length > 0
+          ? `/${pathname.split("/")[1]}/gestioncheques/pversement`
+          : "/",
+      label: "Pointage vérsements",
+      active: pathname.includes(`/gestioncheques/pversement`),
+    },
   ];
 
   return (

@@ -1,5 +1,4 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -9,15 +8,13 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Store } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 import { ChevronsUpDown } from "lucide-react";
 import Link from "next/link";
 import { Cheque } from "@prisma/client";
 import { ParamsHook } from "@/hooks/use-parmas";
-import { DeleteCheque } from "@/actions/cheque-actions/delete-cheque";
 import { Badge } from "@/components/ui/badge";
-import Alerte from "@/components/alerte";
 import { AlertUse } from "@/hooks/use-alerte";
 
 export const ChequeColumns: ColumnDef<Cheque>[] = [
@@ -318,20 +315,20 @@ export const ChequeColumns: ColumnDef<Cheque>[] = [
               className="bg-white z-50 mb-3 shadow-lg p-4 rounded-xl  font-semibold"
               align="end"
             >
-              <DropdownMenuItem className="hover:text-primary p-2 focus:outline-none">
-                <Link
-                  href={`/${params.boutiqueId}/gestioncheques/${row.original.id}`}
-                >
+              <Link
+                href={`/${params.boutiqueId}/gestioncheques/${row.original.id}`}
+              >
+                <DropdownMenuItem className="hover:text-primary p-2 focus:outline-none cursor-pointer">
                   Edit
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="hover:text-primary p-2 focus:outline-none">
-                <Link
-                  href={`/${params.boutiqueId}/gestioncheques/${row.original.id}/reglement`}
-                >
+                </DropdownMenuItem>
+              </Link>
+              <Link
+                href={`/${params.boutiqueId}/gestioncheques/${row.original.id}/reglement`}
+              >
+                <DropdownMenuItem className="hover:text-primary p-2 focus:outline-none cursor-pointer">
                   Réglement
-                </Link>
-              </DropdownMenuItem>
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuItem
                 className="hover:text-primary p-2 focus:outline-none cursor-pointer"
                 onClick={() => {
