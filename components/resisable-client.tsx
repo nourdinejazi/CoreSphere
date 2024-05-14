@@ -20,6 +20,7 @@ import {
   AlertCircle,
   MessagesSquare,
   ShoppingCart,
+  FileBarChart2,
 } from "lucide-react";
 import { NavCombo } from "@/components/nav-combo";
 import { usePathname } from "next/navigation";
@@ -41,12 +42,11 @@ export function ResisableClient({
   const pathname = usePathname().split("/");
   const notHomePage = pathname.length > 0;
 
-  console.log(pathname);
   const links1 = [
     {
       href: notHomePage ? `/${pathname[1]}/gestioncheques` : "/",
       label: "Chèques en caisse",
-      active: pathname.length == 3,
+      active: pathname.length == 3 && pathname[2] == "gestioncheques",
       icon: Inbox,
       variant: "default",
     },
@@ -75,11 +75,12 @@ export function ResisableClient({
       active: false,
       icon: Trash2,
     },
+
     {
-      href: "#",
-      active: false,
-      label: "Archive",
-      icon: Archive,
+      label: "Relevé",
+      icon: FileBarChart2,
+      href: notHomePage ? `/${pathname[1]}/releve` : "/",
+      active: pathname.includes(`releve`),
     },
   ];
 
@@ -110,12 +111,11 @@ export function ResisableClient({
       href: "#",
       active: false,
     },
-
     {
-      label: "Promotions",
-      icon: Archive,
       href: "#",
       active: false,
+      label: "Archive",
+      icon: Archive,
     },
   ];
 

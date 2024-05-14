@@ -16,10 +16,22 @@ export async function GET(
 
     const data = await db.cheque.findMany({
       where: {
+        statusPayement: false,
         date: {
           lte: new Date(Number(params.datevc)),
         },
-        type: "GAR",
+        OR: [
+          {
+            type: {
+              equals: null,
+            },
+          },
+          {
+            type: {
+              not: "V_C",
+            },
+          },
+        ],
       },
     });
 

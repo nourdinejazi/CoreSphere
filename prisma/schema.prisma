@@ -36,6 +36,8 @@ model Cheque{
   versement  Versement? @relation(fields: [versementId], references: [id])
   versementId String?
 
+
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -53,13 +55,44 @@ model Reglement {
 
 model Versement {
    id            String    @id @default(cuid())
-   codeBanque String  @db.VarChar(5)
    dateVersement DateTime
    num  String @db.VarChar(7)
+   
    cheque Cheque[]
+
+   bank Banks @relation(fields: [bankId], references: [ID])
+   bankId String
+
    createdAt   DateTime @default(now())
    updatedAt   DateTime @updatedAt
 }
+
+
+model Banks {
+  ID   String    @id @default(cuid())
+  CODB String @unique
+  NOMB String @unique
+  RIB String
+  ADRE String?
+  NTEL String?
+  AUTRE String?
+  CODID String?
+  TYPE String?
+  DATMAJ String?
+  NVISA String?
+  NAMEX String?
+  POURV Float?
+  TYPVER String?
+  TYPTPE String?
+  POURL Int?
+  POURE Int?
+  versement Versement[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+
 
 
 enum method {

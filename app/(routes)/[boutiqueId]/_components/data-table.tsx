@@ -107,7 +107,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="  pb-16 px-2 rounded-t-xl ">
       <div className="   bg-white rounded-t-xl pt-4 px-4 print:p-0 shadow-md">
-        <div className=" no-print  text-[#969696] flex flex-col items-center justify-center  gap-2   ">
+        <div className=" no-print  text-[#969696]  flex flex-col items-center justify-center  gap-2   ">
           <div className="flex gap-2 px-3  no-scroll-bar    items-center justify-start  w-full overflow-x-auto  ">
             <div className="flex items-center ">
               <Input
@@ -183,7 +183,7 @@ export function DataTable<TData, TValue>({
           </div>
         </div>
 
-        <div className="bg-[#E9EEF0] print:bg-white space-y-4 rounded-t-xl p-4  ">
+        <div className="bg-[#E9EEF0]   print:bg-white space-y-4 rounded-t-xl p-4  ">
           <h1 className="text-xl font-medium">Liste des chèques en caisse</h1>
           <div className="text-sm flex items-center justify-start gap-2">
             <span className="font-semibold"> Total montant :</span>

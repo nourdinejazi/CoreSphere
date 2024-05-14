@@ -1,26 +1,11 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { CornerRightDown, LogIn, MoreHorizontal, Store } from "lucide-react";
+import { LogIn } from "lucide-react";
 
 import { ChevronsUpDown } from "lucide-react";
-import Link from "next/link";
-import { Cheque } from "@prisma/client";
-import { ParamsHook } from "@/hooks/use-parmas";
-import { DeleteCheque } from "@/actions/cheque-actions/delete-cheque";
 import { Badge } from "@/components/ui/badge";
-import Alerte from "@/components/alerte";
-import { AlertUse } from "@/hooks/use-alerte";
 import { DateBanqueForm } from "./dateBanque-form";
-import { Console } from "console";
 type Pdata = {
   id: string;
   nche: string;
@@ -213,11 +198,17 @@ export const PversementColumns: ColumnDef<Pdata>[] = [
       );
     },
     cell: ({ row }) => {
-      return !row.original.dateBanque ? (
-        <DateBanqueForm id={row.original.id} />
-      ) : (
-        row.original.dateBanque.toLocaleDateString()
-      );
+      if (!row.original.dateBanque)
+        return <DateBanqueForm initialData={null} id={row.original.id} />;
+      else {
+        const day = row.original.dateBanque?.getDate().toString();
+        const month = (row.original.dateBanque?.getMonth() + 1).toString();
+        const year = row.original.dateBanque?.getFullYear().toString();
+        const initialData = { day, month, year };
+        return (
+          <DateBanqueForm initialData={initialData} id={row.original.id} />
+        );
+      }
     },
     filterFn: (row, id, value) => {
       if (value.includes("pointé") && row.getValue(id)) {

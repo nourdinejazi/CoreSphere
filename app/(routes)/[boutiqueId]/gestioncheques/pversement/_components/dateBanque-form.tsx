@@ -1,5 +1,4 @@
 "use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -7,26 +6,35 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { CalendarPlus, Check, X } from "lucide-react";
+import { CirclePlus, CornerDownLeft, X } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { PointageVersement } from "@/actions/bourd-actions/pointage-versement";
 import { useParams } from "next/navigation";
 import { PointageVersementSchema } from "@/schemas/cheque-schemas";
-import SmallSpinner from "@/components/small-spinner";
 import { cn } from "@/lib/utils";
+import Ld from "@/components/loader";
+import { AlertUse } from "@/hooks/use-alerte";
+import Reveal from "@/components/reveal";
 
 interface DateBanqueFormProps {
   id: string;
+  initialData: {
+    day: string;
+    month: string;
+    year: string;
+  } | null;
 }
 
-export function DateBanqueForm({ id }: DateBanqueFormProps) {
+export function DateBanqueForm({ id, initialData }: DateBanqueFormProps) {
   const [show, setShow] = useState(false);
   const [isPending, startTransition] = useTransition();
   const params = useParams();
+  const alr = AlertUse();
+
   const form = useForm<z.infer<typeof PointageVersementSchema>>({
     resolver: zodResolver(PointageVersementSchema),
-    defaultValues: {
+    defaultValues: initialData || {
       day: "",
       month: "",
       year: "",
@@ -46,116 +54,174 @@ export function DateBanqueForm({ id }: DateBanqueFormProps) {
               }
             }
           ),
-        {
-          loading: "Ajout en cours...",
-          error: (err) => err,
-          success: (data) => data,
-        }
+        { error: (err) => err, success: (data) => data }
       );
     });
-    form.reset();
+
     setShow(false);
   }
 
-  if (!show)
+  if (!show && !initialData)
     return (
-      <Button onClick={() => setShow(true)}>
-        {isPending ? <SmallSpinner /> : <CalendarPlus size={17} />}
-      </Button>
+      <div>
+        {isPending ? (
+          <div className="flex items-center mx-4 justify-start">
+            <Ld />
+          </div>
+        ) : (
+          <Reveal>
+            <div>
+              <Button variant={"ghost"} onClick={() => setShow(true)}>
+                <CirclePlus size={17} />
+              </Button>
+              <Button
+                variant={"ghost"}
+                onClick={() => {
+                  alr.setOpen();
+                  alr.setModule("Impayé");
+                  alr.setCodeBoutique(params.boutiqueId as string);
+                  alr.setId(id);
+                  alr.setDescription("Le versement sera marqué comme impayé.");
+                }}
+              >
+                <CornerDownLeft className="text-yellow-500" size={17} />
+              </Button>
+            </div>
+          </Reveal>
+        )}
+      </div>
     );
   else
     return (
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className={cn(
-            " flex items-center justify-start gap-1  w-full  opacity-0    ",
-            show && " opacity-100 transition-all duration-1000 "
+      <Reveal>
+        <div>
+          {initialData && !show && !isPending && (
+            <Reveal>
+              <div className="flex items-center justify-start gap-2">
+                <Button
+                  type="button"
+                  variant={"ghost"}
+                  onClick={() => {
+                    setShow(true);
+                    form.reset(
+                      initialData || {
+                        day: "",
+                        month: "",
+                        year: "",
+                      }
+                    );
+                  }}
+                >
+                  <div className="flex">
+                    <span>{initialData.day.padStart(2, "0")}/</span>
+                    <span>{initialData.month.padStart(2, "0")}/</span>
+                    <span>{initialData.year}</span>
+                  </div>
+                </Button>
+              </div>
+            </Reveal>
           )}
-        >
-          <FormField
-            control={form.control}
-            name="day"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    {...field}
-                    disabled={isPending}
-                    className="w-12 "
-                    maxLength={2}
-                    onBlur={(e) => {
-                      if (e.target.value.length == 1) {
-                        field.onChange(e.target.value.padStart(2, "0"));
-                      }
-                    }}
+          {show && (
+            <Reveal>
+              <Form {...form}>
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className={cn(" flex items-center justify-start gap-1  ")}
+                >
+                  <FormField
+                    control={form.control}
+                    name="day"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={isPending}
+                            className="w-12 "
+                            maxLength={2}
+                            onBlur={(e) => {
+                              if (e.target.value.length == 1) {
+                                field.onChange(e.target.value.padStart(2, "0"));
+                              }
+                            }}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
                   />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <span>/</span>
-          <FormField
-            control={form.control}
-            name="month"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    {...field}
-                    disabled={isPending}
-                    className="w-12 "
-                    maxLength={2}
-                    onBlur={(e) => {
-                      if (e.target.value.length == 1) {
-                        field.onChange(e.target.value.padStart(2, "0"));
-                      }
-                    }}
+                  <span>/</span>
+                  <FormField
+                    control={form.control}
+                    name="month"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={isPending}
+                            className="w-12 "
+                            maxLength={2}
+                            onBlur={(e) => {
+                              if (e.target.value.length == 1) {
+                                field.onChange(e.target.value.padStart(2, "0"));
+                              }
+                            }}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
                   />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <span>/</span>
-          <FormField
-            control={form.control}
-            name="year"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <Input
-                    {...field}
-                    disabled={isPending}
-                    maxLength={2}
-                    onBlur={(e) => {
-                      if (
-                        e.target.value.length < 4 &&
-                        e.target.value.length > 1
-                      ) {
-                        field.onChange("20" + e.target.value);
-                      }
-                    }}
-                    className="w-[60px] "
+                  <span>/</span>
+                  <FormField
+                    control={form.control}
+                    name="year"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            disabled={isPending}
+                            maxLength={2}
+                            onBlur={(e) => {
+                              if (
+                                e.target.value.length < 4 &&
+                                e.target.value.length > 1
+                              ) {
+                                field.onChange("20" + e.target.value);
+                              }
+                            }}
+                            className="w-[60px] "
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
                   />
-                </FormControl>
-              </FormItem>
-            )}
-          />
 
-          <Button disabled={isPending} size={"sm"} type="submit">
-            <Check size={15} />
-          </Button>
-          {!isPending && (
-            <Button
-              onClick={() => setShow(false)}
-              variant={"ghost"}
-              size={"sm"}
-              type="button"
-            >
-              <X size={15} />
-            </Button>
+                  <Button disabled={isPending} size={"sm"} type="submit">
+                    {initialData ? "Modifier" : "Ajouter"}
+                  </Button>
+                  {!isPending && (
+                    <Button
+                      onClick={() => setShow(false)}
+                      variant={"ghost"}
+                      size={"sm"}
+                      type="button"
+                    >
+                      <X size={15} />
+                    </Button>
+                  )}
+                </form>
+              </Form>
+            </Reveal>
           )}
-        </form>
-      </Form>
+          {isPending && (
+            <Reveal>
+              <div className="flex items-center mx-4 justify-start">
+                <Ld />
+              </div>
+            </Reveal>
+          )}
+        </div>
+      </Reveal>
     );
 }

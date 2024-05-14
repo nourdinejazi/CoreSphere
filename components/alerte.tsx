@@ -1,6 +1,6 @@
 "use client";
-
 import { DeleteBourd } from "@/actions/bourd-actions/delete-bourd";
+import { ImpVersement } from "@/actions/bourd-actions/imp-versement";
 import { DeleteCheque } from "@/actions/cheque-actions/delete-cheque";
 import { DeleteReglement } from "@/actions/cheque-actions/reglement-actions/delete-reglement";
 import {
@@ -16,6 +16,7 @@ import {
 import { AlertUse } from "@/hooks/use-alerte";
 import { startTransition } from "react";
 import { toast } from "sonner";
+import { buttonVariants } from "./ui/button";
 
 const Alerte = () => {
   const alr = AlertUse();
@@ -27,6 +28,8 @@ const Alerte = () => {
       return DeleteReglement(alr.codeBoutique, alr.id);
     } else if (alr.module === "Versement") {
       return DeleteBourd(alr.id, alr.codeBoutique);
+    } else if (alr.module === "Impayé") {
+      return ImpVersement(alr.id, alr.codeBoutique);
     } else {
       return Promise.reject("Module not found");
     }
@@ -36,15 +39,21 @@ const Alerte = () => {
     <AlertDialog open={alr.open} onOpenChange={() => alr.setOpen()}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Êtes-vous absolument sûr ?</AlertDialogTitle>
+          <AlertDialogTitle>
+            {!alr.title ? " Êtes-vous absolument sûr ?" : alr.title}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            Cette action ne peut pas être annulée. Cela supprimera
-            définitivement les données de la base.
+            {!alr.description
+              ? "Cette action ne peut pas être annulée. Cela supprimera définitivement les données de la base."
+              : alr.description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annuler</AlertDialogCancel>
           <AlertDialogAction
+            className={buttonVariants({
+              variant: alr.module === "Impayé" ? "default" : "destructive",
+            })}
             onClick={() =>
               startTransition(() => {
                 toast.promise(
@@ -62,6 +71,7 @@ const Alerte = () => {
                     success: (data) => data,
                   }
                 );
+                alr.reset();
               })
             }
           >

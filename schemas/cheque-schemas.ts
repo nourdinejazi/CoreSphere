@@ -1,7 +1,6 @@
 import * as z from "zod";
 import { banks } from "@/data/jdata";
 import vbanks from "@/data/vbanks.json";
-import { Cheque } from "@prisma/client";
 export const ChequeSchema = z.object({
   codeBanque: z
     .string()
@@ -105,5 +104,21 @@ export const PointageVersementSchema = z.object({
   year: z.coerce.string().refine((value) => {
     if (isNaN(Number(value))) return false;
     return value.length === 4;
+  }),
+});
+
+export const releveSchema = z.object({
+  codeBanque: z
+    .string()
+    .refine(
+      (value) => vbanks.some((bank) => bank.CODB === value.toUpperCase()),
+      {
+        message: "Code banque is invalid",
+      }
+    ),
+
+  dateRange: z.object({
+    from: z.date(),
+    to: z.date(),
   }),
 });

@@ -22,11 +22,27 @@ export const AddBourd = async (
   values = { ...validatedFields.data };
 
   try {
+    const vbank = await db.banks.findUnique({
+      where: {
+        CODB: values.codeBanque,
+      },
+      select: {
+        ID: true,
+        NOMB: true,
+      },
+    });
+
+    if (!vbank) {
+      return { error: "Code banque invalide!" };
+    }
+
     await db.versement.create({
       data: {
         dateVersement: values.dateVersement,
-        codeBanque: values.codeBanque,
         num: values.num,
+        bank: {
+          connect: vbank,
+        },
         cheque: {
           connect: values.cheque.map((id) => ({ id })),
         },

@@ -12,13 +12,15 @@ import { MoreHorizontal } from "lucide-react";
 
 import { ChevronsUpDown } from "lucide-react";
 import Link from "next/link";
-import { Cheque, Versement } from "@prisma/client";
+import { Banks, Cheque, Versement } from "@prisma/client";
 import { ParamsHook } from "@/hooks/use-parmas";
 import { Badge } from "@/components/ui/badge";
 import { AlertUse } from "@/hooks/use-alerte";
 import ViewCheques from "./viewCheques";
 
-export const VersementColumns: ColumnDef<Versement & { cheque: Cheque[] }>[] = [
+export const VersementColumns: ColumnDef<
+  Versement & { cheque: Cheque[] } & { bank: Banks }
+>[] = [
   {
     id: "select",
     cell: ({ row }) => (
@@ -51,7 +53,7 @@ export const VersementColumns: ColumnDef<Versement & { cheque: Cheque[] }>[] = [
     cell: ({ row }) => {
       return (
         <span>
-          <Badge variant={"default"}>{row.original.codeBanque}</Badge>
+          <Badge variant={"default"}>{row.original.bank.CODB}</Badge>
         </span>
       );
     },
@@ -109,7 +111,7 @@ export const VersementColumns: ColumnDef<Versement & { cheque: Cheque[] }>[] = [
   {
     accessorKey: "cheque",
     id: "cheque",
-    header: "Voir Détails",
+    header: "Détails",
     cell: ({ row }) => {
       return <ViewCheques data={row.original} />;
     },

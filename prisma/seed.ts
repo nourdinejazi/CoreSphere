@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 function convertDateFormat(dateStr: string): string {
   let parts = dateStr.split("/");
   let year = +parts[2];
-  let month = +parts[1] - 1; // Months are 0-indexed in JavaScript
+  let month = +parts[1] - 1;
   let day = +parts[0];
 
   if (
@@ -34,8 +34,10 @@ function convertDateFormat(dateStr: string): string {
 async function seedDatabase() {
   try {
     const jsonData = fs.readFileSync("public/chequeseed.json", "utf-8");
+    const jsonDataVbanks = fs.readFileSync("data/vbanks.json", "utf-8");
 
     let data = JSON.parse(jsonData);
+    let vbanks = JSON.parse(jsonDataVbanks);
 
     data = data.map((cheque: any) => {
       cheque.date = cheque.date ? convertDateFormat(cheque.date) : new Date();
@@ -49,9 +51,13 @@ async function seedDatabase() {
     });
 
     // Seed the database
-    await prisma.cheque.createMany({
-      data,
-    });
+    // await prisma.cheque.createMany({
+    //   data,
+    // });
+
+    // await prisma.banks.createMany({
+    //   data: vbanks,
+    // });
 
     // const data = {
     //   codeBanque: "TAITE",

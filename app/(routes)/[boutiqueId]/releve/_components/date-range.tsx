@@ -13,15 +13,25 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ControllerRenderProps } from "react-hook-form";
 
 interface DatePickerWithRangeProps {
   className?: string;
-  onDateChange: (date: DateRange | undefined) => void;
+  field: ControllerRenderProps<
+    {
+      codeBanque: string;
+      dateRange: {
+        from: Date;
+        to: Date;
+      };
+    },
+    "dateRange"
+  >;
 }
 
 export function DatePickerWithRange({
   className,
-  onDateChange,
+  field,
 }: DatePickerWithRangeProps) {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: undefined,
@@ -29,7 +39,8 @@ export function DatePickerWithRange({
   });
 
   React.useEffect(() => {
-    onDateChange(date);
+    console.log(date);
+    field.onChange(date);
   }, [date]);
 
   return (

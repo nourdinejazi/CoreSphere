@@ -7,6 +7,7 @@ const VersementClient = async () => {
   const data = await db.versement.findMany({
     include: {
       cheque: true,
+      bank: true,
     },
   });
 

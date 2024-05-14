@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { PversementColumns } from "./pversement-columns";
 import { DataTable } from "./pversement-data-table";
+import Alerte from "@/components/alerte";
 
 const PversementClient = async () => {
   const data = await db.cheque.findMany({
@@ -21,7 +22,7 @@ const PversementClient = async () => {
       versement: {
         select: {
           id: true,
-          codeBanque: true,
+          bank: true,
           num: true,
           dateVersement: true,
         },
@@ -38,7 +39,7 @@ const PversementClient = async () => {
     date: obj.date,
     type: obj.type,
     dateBanque: obj.dateBanque,
-    banqueVersement: obj.versement!.codeBanque,
+    banqueVersement: obj.versement!.bank.CODB,
     versementId: obj.versement!.id,
     num: obj.versement!.num,
     dateVersement: obj.versement!.dateVersement,
@@ -46,6 +47,7 @@ const PversementClient = async () => {
 
   return (
     <div>
+      <Alerte />
       <DataTable data={formattedData} columns={PversementColumns} />{" "}
     </div>
   );

@@ -20,14 +20,49 @@ export const PointageVersement = async (
   }
 
   values = { ...validatedFields.data };
-
+  const datePointage = new Date(`${values.year}-${values.month}-${values.day}`);
   try {
+    if (datePointage > new Date()) {
+      return {
+        error:
+          "Date pointage ne peut pas être supérieure à la date d'aujourd'hui",
+      };
+    }
+
+    const cheque = await db.cheque.findUnique({
+      where: {
+        id: id,
+      },
+      select: {
+        versement: {
+          select: {
+            dateVersement: true,
+          },
+        },
+      },
+    });
+
+    if (!cheque) {
+      return { error: "Chéque non trouvé!" };
+    }
+
+    if (!cheque.versement) {
+      return { error: "Chéque non versé!" };
+    }
+
+    if (cheque.versement.dateVersement > datePointage) {
+      return {
+        error:
+          "Date pointage ne peut pas être inférieur à la date de vérsement!",
+      };
+    }
+
     await db.cheque.update({
       where: {
         id: id,
       },
       data: {
-        dateBanque: new Date(`${values.year}-${values.month}-${values.day}`),
+        dateBanque: datePointage,
       },
     });
 

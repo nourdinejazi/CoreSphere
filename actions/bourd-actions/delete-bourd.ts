@@ -36,7 +36,7 @@ export const DeleteBourd = async (id: string, codeBoutique: string) => {
         },
       },
       data: {
-        type: "GAR",
+        type: null,
       },
     });
 
