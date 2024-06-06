@@ -40,13 +40,29 @@ export const UpdateBourd = async (
       return { error: "Versement not found!" };
     }
 
+    const vbank = await db.banks.findUnique({
+      where: {
+        CODB: values.codeBanque,
+      },
+      select: {
+        ID: true,
+        NOMB: true,
+      },
+    });
+
+    if (!vbank) {
+      return { error: "Code banque invalide!" };
+    }
+
     await db.versement.update({
       where: {
         id: id,
       },
       data: {
         dateVersement: values.dateVersement,
-        codeBanque: values.codeBanque,
+        bank: {
+          connect: vbank,
+        },
         num: values.num,
         cheque: {
           disconnect: current.cheque,
