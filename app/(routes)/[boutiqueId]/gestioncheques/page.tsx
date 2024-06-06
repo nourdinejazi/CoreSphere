@@ -1,4 +1,5 @@
 import ClientListCheques from "@/app/(routes)/[boutiqueId]/gestioncheques/_components/client-liste-cheques";
+import TableFallBack from "@/components/tableFallBack";
 import { Suspense } from "react";
 
 const GestionChequePage = async ({
@@ -8,13 +9,7 @@ const GestionChequePage = async ({
 }) => {
   return (
     <div>
-      <Suspense
-        fallback={
-          <div className="w-full  flex items-center justify-center h-[70vh] ">
-            <div className="fastLoader border-[4px] border-primary "></div>
-          </div>
-        }
-      >
+      <Suspense fallback={<TableFallBack />}>
         <ClientListCheques params={params.boutiqueId} />
       </Suspense>
     </div>

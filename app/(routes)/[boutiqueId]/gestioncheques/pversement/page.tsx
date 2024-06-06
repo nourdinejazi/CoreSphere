@@ -2,6 +2,7 @@ import { PathSlash } from "@/components/path-slash";
 
 import { Suspense } from "react";
 import PversementClient from "./_components/pversement-client";
+import TableFallBack from "@/components/tableFallBack";
 
 const PversementPage = async ({
   params,
@@ -13,13 +14,7 @@ const PversementPage = async ({
       <div className="p-5 print:hidden flex items-center justify-between ">
         <PathSlash />
       </div>
-      <Suspense
-        fallback={
-          <div className="w-full  flex items-center justify-center h-[70vh] ">
-            <div className="fastLoader border-[4px] border-primary "></div>
-          </div>
-        }
-      >
+      <Suspense fallback={<TableFallBack />}>
         <PversementClient />
       </Suspense>
     </div>

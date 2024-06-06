@@ -5,6 +5,7 @@ import Link from "next/link";
 
 import { Suspense } from "react";
 import VersementClient from "./_components/versementClient";
+import TableFallBack from "@/components/tableFallBack";
 
 const VersementPage = async ({
   params,
@@ -20,13 +21,7 @@ const VersementPage = async ({
           <Button>Ajouter un Versement</Button>
         </Link>
       </div>
-      <Suspense
-        fallback={
-          <div className="w-full  flex items-center justify-center h-[70vh] ">
-            <div className="fastLoader border-[4px] border-primary "></div>
-          </div>
-        }
-      >
+      <Suspense fallback={<TableFallBack />}>
         <VersementClient />
       </Suspense>
     </div>
