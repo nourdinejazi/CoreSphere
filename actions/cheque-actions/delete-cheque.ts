@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 
 import { revalidatePath } from "next/cache";
 
-export const DeleteCheque = async (codeBoutique: string, chequeId: string) => {
+export const DeleteCheque = async (chequeId: string, codeBoutique: string) => {
   try {
     await db.cheque.delete({
       where: {

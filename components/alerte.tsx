@@ -17,19 +17,27 @@ import { AlertUse } from "@/hooks/use-alerte";
 import { startTransition } from "react";
 import { toast } from "sonner";
 import { buttonVariants } from "./ui/button";
+import { DeleteRetrait } from "@/actions/espece-action/retrait/delete-retrait";
+import { DeleteVersementEsp } from "@/actions/espece-action/versementesp/delete-versementesp";
 
 const Alerte = () => {
   const alr = AlertUse();
 
   const handleWho = () => {
     if (alr.module === "Cheque") {
-      return DeleteCheque(alr.codeBoutique, alr.id);
+      return DeleteCheque(alr.id, alr.codeBoutique);
     } else if (alr.module === "Reglement") {
       return DeleteReglement(alr.codeBoutique, alr.id);
     } else if (alr.module === "Versement") {
       return DeleteBourd(alr.id, alr.codeBoutique);
     } else if (alr.module === "Impayé") {
       return ImpVersement(alr.id, alr.codeBoutique);
+    } else if (alr.module === "Retrait") {
+      console.log(alr.id, alr.codeBoutique);
+      return DeleteRetrait(alr.id, alr.codeBoutique);
+    } else if (alr.module === "VersementEsp") {
+      console.log(alr.id, alr.codeBoutique);
+      return DeleteVersementEsp(alr.id, alr.codeBoutique);
     } else {
       return Promise.reject("Module not found");
     }

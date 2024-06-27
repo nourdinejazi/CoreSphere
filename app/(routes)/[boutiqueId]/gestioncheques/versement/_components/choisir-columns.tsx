@@ -1,24 +1,11 @@
 "use client";
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Store } from "lucide-react";
 
 import { ChevronsUpDown } from "lucide-react";
-import Link from "next/link";
 import { Cheque } from "@prisma/client";
-import { ParamsHook } from "@/hooks/use-parmas";
-import { DeleteCheque } from "@/actions/cheque-actions/delete-cheque";
 import { Badge } from "@/components/ui/badge";
-import Alerte from "@/components/alerte";
-import { AlertUse } from "@/hooks/use-alerte";
 
 export const ChoisirColumns: ColumnDef<Cheque>[] = [
   {

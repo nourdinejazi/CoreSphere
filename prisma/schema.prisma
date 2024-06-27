@@ -32,12 +32,8 @@ model Cheque{
   nver String? @db.VarChar(7)
   dateBanque DateTime?
   reglement Reglement[]
-
   versement  Versement? @relation(fields: [versementId], references: [id])
   versementId String?
-
-
-
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -87,9 +83,36 @@ model Banks {
   POURL Int?
   POURE Int?
   versement Versement[]
+  retrait Retrait[] 
+  versementEsp versementEsp[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model Retrait {
+  id            String    @id @default(cuid())
+  num  String @db.VarChar(7)
+  dateRetrait DateTime
+  montant Float
+  bank Banks @relation(fields: [bankId], references: [ID])
+  bankId String
+  dateBanque DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model versementEsp {
+  id            String    @id @default(cuid())
+  num  String @db.VarChar(7)
+  dateVersmentEsp DateTime
+  montant Float
+  bank Banks @relation(fields: [bankId], references: [ID])
+  bankId String
+  dateBanque DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 
 
 

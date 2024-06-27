@@ -6,14 +6,28 @@ interface AlertUseProps {
   id: string;
   description: string | null;
   title: string | null;
-  module: "Reglement" | "Cheque" | "Versement" | "Impayé" | null;
+  module:
+    | "Reglement"
+    | "Cheque"
+    | "Versement"
+    | "Impayé"
+    | "VersementEsp"
+    | "Retrait"
+    | null;
   setOpen: () => void;
   setCodeBoutique: (codeBoutique: string) => void;
   setId: (id: string) => void;
   setDescription: (description: string) => void;
   setTitle: (title: string) => void;
   setModule: (
-    module: "Reglement" | "Cheque" | "Versement" | "Impayé" | null
+    module:
+      | "Reglement"
+      | "Cheque"
+      | "Versement"
+      | "VersementEsp"
+      | "Retrait"
+      | "Impayé"
+      | null
   ) => void;
   reset: () => void;
 }

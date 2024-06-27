@@ -51,7 +51,7 @@ const ViewCheques = ({ data }: { data: Versement & { cheque: Cheque[] } }) => {
         </DialogHeader>
         <div className="   rounded-xl ">
           <Table className="text-nowrap">
-            <TableCaption>Liste des chéque du Bordereau </TableCaption>
+            <TableCaption>Liste des chéques du Bordereau </TableCaption>
             <TableHeader>
               <TableRow>
                 <TableHead>COP</TableHead>

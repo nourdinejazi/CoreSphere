@@ -14,12 +14,7 @@ import {
   Inbox,
   Send,
   File,
-  Trash2,
-  Archive,
   Users2,
-  AlertCircle,
-  MessagesSquare,
-  ShoppingCart,
   FileBarChart2,
 } from "lucide-react";
 import { NavCombo } from "@/components/nav-combo";
@@ -70,13 +65,6 @@ export function ResisableClient({
     },
 
     {
-      href: "#",
-      label: "Trash",
-      active: false,
-      icon: Trash2,
-    },
-
-    {
       label: "Relevé",
       icon: FileBarChart2,
       href: notHomePage ? `/${pathname[1]}/releve` : "/",
@@ -86,36 +74,30 @@ export function ResisableClient({
 
   const links2 = [
     {
-      label: "Social",
+      label: "Retrait espèce",
       icon: Users2,
-      href: "#",
-      active: false,
+      href: notHomePage ? `/${pathname[1]}/gestionespece/retrait` : "/",
+      active: pathname.includes(`retrait`),
     },
     {
-      label: "Updates",
-      icon: AlertCircle,
-      href: "#",
-      active: false,
-    },
-
-    {
-      label: "Forums",
-      icon: MessagesSquare,
-      href: "#",
-      active: false,
+      label: "Versement espèce",
+      icon: Send,
+      href: notHomePage ? `/${pathname[1]}/gestionespece/versementesp` : "/",
+      active: pathname.includes(`versementesp`),
     },
 
     {
-      label: "Shopping",
-      icon: ShoppingCart,
-      href: "#",
-      active: false,
+      label: "Pointage Retrait espèce",
+      icon: ArchiveX,
+      href: notHomePage ? `/${pathname[1]}/gestionespece/pretrait` : "/",
+      active: pathname.includes(`pretrait`),
     },
+
     {
-      href: "#",
-      active: false,
-      label: "Archive",
-      icon: Archive,
+      label: "Pointage Versement espèce",
+      icon: ArchiveX,
+      href: notHomePage ? `/${pathname[1]}/gestionespece/pversementesp` : "/",
+      active: pathname.includes(`pversementesp`),
     },
   ];
 
