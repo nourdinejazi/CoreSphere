@@ -1,4 +1,4 @@
-# CoreShere (ERP)
+# CoreSphere (ERP)
 
 
 This is an Enterprise resource planning (ERP) that I'm building.
@@ -7,11 +7,6 @@ This is an Enterprise resource planning (ERP) that I'm building.
 
 **Node version 18.7.x**
 
-### Cloning the repository
-
-```shell
-git clone https://github.com/AntonioErdeljac/next-auth-v5-advanced-guide.git
-```
 
 ### Install packages
 
