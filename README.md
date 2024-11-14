@@ -5,7 +5,8 @@
 ![localhost_3000_jarr_gestioncheques_versement_new (2)](https://github.com/user-attachments/assets/802a3d25-4efc-4411-92ea-6b776ca08acb)
 ![localhost_3000_jarr_gestioncheques_versement_new (3)](https://github.com/user-attachments/assets/367079b4-0142-4ace-9fef-d49ee2ae412f)
 
-This is an Enterprise resource planning (ERP) that I'm building. It manages multiple branches with a theme for each branch.
+This is an Enterprise resource planning (ERP) SaaS that I'm building. It manages multiple branches with a theme for each branch.
+The project is still work in progress!!
 
 ### Prerequisites
 
